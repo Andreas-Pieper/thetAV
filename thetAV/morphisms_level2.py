@@ -26,24 +26,24 @@ The first half is from [VanW]_ and the last sections are algorithms from [Coss]_
 Based on the Magma implementation by Romain Cosset.
 
 LAYOUT:
-   
+
     3 - Manipulations of elements of Ep
-    
+
     4 - twisted theta
-    
+
     3 - Auxiliary functions
-    
+
     4 - Expression of Ep
-    
+
     6 - Mumford to Theta
-    
+
     7 - Theta to Mumford
-    
+
 .. todo::
 
     - Reformat info above.
     - Sort documentation by source (to maintain layout)
-    
+
 """
 
 
@@ -169,7 +169,7 @@ def MumfordToLevel2ThetaPoint(a, thc2, points):
 
 
     .. todo:: Add tests that cover the missing cases.
-    
+
     """
     if thc2.level() != 2:
         raise ValueError(f'Expected level-2 theta structure.')
@@ -192,7 +192,7 @@ def MumfordToLevel2ThetaPoint(a, thc2, points):
         return MumfordToTheta_2_Generic(a, thc2, points)
 
     V2 = set()
-    
+
     if len(points) < g:
         for l, al in enumerate(a):
             if l not in V1:
@@ -400,7 +400,7 @@ def ThetaToMumford_2_algclose(a, th2):
     Assume that the base field is algebraically closed
 
     Compute the Mumford polynomials (u,v^2) associated to D
-    
+
     .. todo:: Difference with function above? Do we need this or can we join them somehow? Test against Magma, add examples
     """
     thc2 = th2.abelian_variety()
@@ -448,11 +448,11 @@ def Level2ThetaPointToMumford(a, th2):
     Let a be the x-coordinate of th Weierstrass points of the curve
 
     .. NOTE::
-    
+
         We use an extension field of degree 2
 
     Compute the Mumford polynomials (u,v^2) associated to D
-    
+
     .. todo:: Test against Magma, add examples
     """
     thc2 = th2.abelian_variety()

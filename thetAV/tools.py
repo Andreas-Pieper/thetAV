@@ -34,28 +34,28 @@ def reduce_sym(x):
     r"""
     Returns the lexicographic minimum among x and -x for x an element in
     Zmod(n)\ :sup:`g`.
-    
+
     EXAMPLES::
-    
+
         sage: D = Zmod(10)^4
         sage: el = D([6, 6, 6, 3])
         sage: from thetAV.tools import reduce_sym
         sage: reduce_sym(el)
         (4, 4, 4, 7)
-        
+
     """
     return min(x, -x)
 
 
 def reduce_twotorsion(x):
     r"""
-    Returns elements y in Zmod(2n)\ :sup:`g`, t Zmod(2)\ :sup:`g` such that 
-    x = y + t and y is the lexicographic minimum of the elements in the 
-    class of x in Zmod(2n)\ :sup:`g` / Zmod(2)\ :sup:`g` with the usual 
+    Returns elements y in Zmod(2n)\ :sup:`g`, t Zmod(2)\ :sup:`g` such that
+    x = y + t and y is the lexicographic minimum of the elements in the
+    class of x in Zmod(2n)\ :sup:`g` / Zmod(2)\ :sup:`g` with the usual
     inclusion of Zmod(2) into Zmod(2n).
-    
+
     EXAMPLES::
-    
+
         sage: D = Zmod(10)^4
         sage: el = D([9, 2, 0, 8])
         sage: from thetAV.tools import reduce_twotorsion
@@ -78,20 +78,20 @@ def reduce_twotorsion(x):
 
 def reduce_symtwotorsion(x):
     r"""
-    Returns elements y in Zmod(2n)\ :sup:`g`, t Zmod(2)\ :sup:`g` such that 
-    y is the lexicographic minimum among the elements in the classes of 
-    x and -x in Zmod(2n)\ :sup:`g` / Zmod(2)\ :sup:`g` with the usual 
-    inclusion of Zmod(2) into Zmod(2n), and t is such that y + t is 
+    Returns elements y in Zmod(2n)\ :sup:`g`, t Zmod(2)\ :sup:`g` such that
+    y is the lexicographic minimum among the elements in the classes of
+    x and -x in Zmod(2n)\ :sup:`g` / Zmod(2)\ :sup:`g` with the usual
+    inclusion of Zmod(2) into Zmod(2n), and t is such that y + t is
     either x or -x.
-    
+
     EXAMPLES::
-    
+
         sage: D = Zmod(10)^4
         sage: el = D([8, 1, 5, 3])
         sage: from thetAV.tools import reduce_symtwotorsion
         sage: reduce_symtwotorsion(el)
         ((2, 4, 0, 2), (0, 1, 1, 1))
-    
+
     """
     x1, tx1 = reduce_twotorsion(x)
     x2, tx2 = reduce_twotorsion(-x)
@@ -102,16 +102,16 @@ def reduce_symcouple(x, y):
     r"""
     Returns the lexicographic minimum of the symmetrical reduction of two
     elements x, y in Zmod(n)\ :sup:`g`.
-    
-    
+
+
     EXAMPLES::
-    
+
         sage: D = Zmod(10)^4
         sage: el1 = D([4, 0, 5, 1]); el2 = D([9, 4, 6, 9])
         sage: from thetAV.tools import reduce_symcouple
         sage: reduce_symcouple(el1, el2)
         ((1, 6, 4, 1), (4, 0, 5, 1))
-        
+
     """
     xred = reduce_sym(x)
     yred = reduce_sym(y)
@@ -122,19 +122,19 @@ def reduce_twotorsion_couple(x, y):
     r"""
     Given two elements x, y in Zmod(2n)\ :sup:`g`, returns elements r, s in
     Zmod(2n)\ :sup:`g`, t in Zmod(2)\ :sup:`g`, such that r is the lexicographic
-    minimum among the elements in the classes of x and y in 
+    minimum among the elements in the classes of x and y in
     Zmod(2n)\ :sup:`g` / Zmod(2)\ :sup:`g` with the usual  inclusion of Zmod(2)
     into Zmod(2n), s satisfies r + s = x + y and t is such that r + t is
     either x or y.
-    
+
     EXAMPLES::
-    
+
         sage: D = Zmod(10)^4
         sage: el1 = D([8, 1, 8, 0]); el2 = D([5, 8, 4, 5])
         sage: from thetAV.tools import reduce_twotorsion_couple
         sage: reduce_twotorsion_couple(el1, el2)
         ((0, 3, 4, 0), (3, 6, 8, 5), (1, 1, 0, 1))
-        
+
     """
     xred, tx = reduce_twotorsion(x)
     yred, ty = reduce_twotorsion(y)
@@ -158,22 +158,22 @@ def reduce_symtwotorsion_couple(x, y):
     r"""
     Given two elements x, y in Zmod(2n)\ :sup:`g`, returns elements r, s in
     Zmod(2n)\ :sup:`g`, t in Zmod(2)\ :sup:`g`, such that r is the lexicographic
-    minimum among the elements in the classes of x, -x, y and -y in 
+    minimum among the elements in the classes of x, -x, y and -y in
     Zmod(2n)\ :sup:`g` / Zmod(2)\ :sup:`g` with the usual  inclusion of Zmod(2)
     into Zmod(2n), s satisfies r + s = ± x ± y and t is such that r + t is
     either x, -x, y or -y.
-    
-    .. todo:: Is s minimal in any sense among all the ones that satisfy 
+
+    .. todo:: Is s minimal in any sense among all the ones that satisfy
               that condition?
-    
+
     EXAMPLES::
-    
+
         sage: D = Zmod(10)^4
         sage: el1 = D([0, 7, 9, 1]); el2 = D([3, 5, 8, 8])
         sage: from thetAV.tools import reduce_symtwotorsion_couple
         sage: reduce_symtwotorsion_couple(el1, el2)
         ((0, 2, 4, 1), (3, 0, 3, 8), (0, 1, 1, 0))
-        
+
     """
     xred, tx = reduce_symtwotorsion(x)
     yred, ty = reduce_symtwotorsion(y)

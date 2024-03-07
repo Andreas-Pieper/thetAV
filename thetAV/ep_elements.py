@@ -25,24 +25,24 @@ The first half is from [VanW]_ and the last sections are algorithms from [Coss]_
 Based on the Magma implementation by Romain Cosset.
 
 LAYOUT:
-   
+
     3 - Manipulations of elements of Ep
-    
+
     4 - twisted theta
-    
+
     3 - Auxiliary functions
-    
+
     4 - Expression of Ep
-    
+
     6 - Mumford to Theta
-    
+
     7 - Theta to Mumford
 
 .. todo::
 
     - Reformat info above.
     - Sort documentation by source (to maintain layout)
-    
+
 """
 
 from collections import Counter, namedtuple

@@ -38,7 +38,8 @@ def transformation(C, a, b, c, d, e, skip=None):
     f, _ = C.hyperelliptic_polynomials()
     g = C.genus()
     rts = f.roots()
-    phi0 = lambda r: (a * r + b) / (c * r + d) if (c * r + d) != 0 else None
+    def phi0(r):
+        return (a * r + b) / (c * r + d) if c * r + d != 0 else None
     X = f.parent().gen()
     f1 = prod(X - phi0(r) for r, m in rts if r != skip)
     C1 = HyperellipticCurve(f1)

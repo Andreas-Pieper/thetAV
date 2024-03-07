@@ -4,7 +4,7 @@
 AUTHORS:
 
 - Anna Somoza (2020-22): initial implementation
-    
+
 """
 
 # ****************************************************************************
@@ -133,12 +133,12 @@ class VarietyThetaStructurePoint(SchemeMorphism_point):
         the rapport Q/P.
 
         INPUT:
-        
+
         - ``Q`` - a point.
-    
+
         - ``proj`` - a boolean (default: `True`). Weather the comparison
           is done as projective points.
-    
+
         - ``factor`` - a boolean (default: `False`). If True, as a second
           argument is returned, the rapport right/self.
 
@@ -286,7 +286,7 @@ class VarietyThetaStructurePoint(SchemeMorphism_point):
         TESTS ::
 
             sage: #TODO level 4 tests
-            
+
         """
         return self._add(other)
 
@@ -306,7 +306,7 @@ class VarietyThetaStructurePoint(SchemeMorphism_point):
             sage: A = KummerVariety(GF(331), 2, [328 , 213 , 75 , 1])
             sage: P = A([255 , 89 , 30 , 1]); - P
             (255 : 89 : 30 : 1)
-            
+
         """
         point0 = self.scheme()
         D = point0._D
@@ -330,18 +330,18 @@ class VarietyThetaStructurePoint(SchemeMorphism_point):
         TESTS ::
 
             sage: #TODO level 4 tests
-            
+
         """
         return self._mult(k)
 
     def _mult(self, k, algorithm='Montgomery'):
         """
         Compute scalar multiplication by `k` with a Montgomery ladder type algorithm.
-        
+
         INPUT:
-        
+
         - ``algorithm`` (default: 'Montgomery'): The chosen algorithm for the computation.
-          It can either be 'Montgomery' for a Montgomery ladder type algorithm, or 
+          It can either be 'Montgomery' for a Montgomery ladder type algorithm, or
           'SquareAndMultiply' for the usual square and multiply algorithm (only for level > 2).
 
         EXAMPLES ::
@@ -351,15 +351,15 @@ class VarietyThetaStructurePoint(SchemeMorphism_point):
             sage: P = A([255 , 89 , 30 , 1])
             sage: P._mult(42)
             (311 : 326 : 136 : 305)
-            
+
         .. SEEALSO::
-        
+
             :meth:`~._rmul_`
-            
+
         TESTS ::
 
             sage: #TODO level 4 tests
-            
+
         """
         if not isinstance(k, integer_types + (Integer,)):
             raise NotImplementedError
@@ -397,9 +397,9 @@ class VarietyThetaStructurePoint(SchemeMorphism_point):
     def diff_multadd(self, k, PQ, Q):
         """
         Computes k*self + Q, k*self.
-        
+
         EXAMPLES::
-        
+
             sage: from thetAV import KummerVariety
             sage: R.<X> = PolynomialRing(GF(331))
             sage: poly = X^4 + 3*X^2 + 290*X + 3
@@ -414,12 +414,12 @@ class VarietyThetaStructurePoint(SchemeMorphism_point):
             sage: P.diff_multadd(42, PQ, Q)
             ((41*t^3 + 291*t^2 + 122*t + 305 : 119*t^3 + 95*t^2 + 120*t + 68 : 81*t^3 + 168*t^2 + 326*t + 24 : 202*t^3 + 251*t^2 + 246*t + 169),
             (311 : 326 : 136 : 305))
-        
+
         .. todo::
 
             If we don't need kP, then we don't need to compute kP, only (k/2)P, so
             we lose 2 differential additions. Could be optimized here.
-            
+
         """
         if k == 0:
             point0 = self.scheme().theta_null_point()
@@ -552,7 +552,7 @@ class VarietyThetaStructurePoint(SchemeMorphism_point):
     def three_way_add(self, Q, R, PQ, QR, PR):
         """
         EXAMPLES::
-        
+
             sage: from thetAV import KummerVariety
             sage: R.<X> = PolynomialRing(GF(331))
             sage: poly = X^4 + 3*X^2 + 290*X + 3
@@ -614,9 +614,9 @@ class VarietyThetaStructurePoint(SchemeMorphism_point):
         """
         Given an affine lift point 'P' and a factor 'k' in the field of definition, returns the
         affine lift given by kx.
-        
+
         EXAMPLE ::
-        
+
             sage: from thetAV import KummerVariety
             sage: F = GF(331)
             sage: A = KummerVariety(F, 2, [328 , 213 , 75 , 1])
@@ -625,9 +625,9 @@ class VarietyThetaStructurePoint(SchemeMorphism_point):
             (282 : 114 : 150 : 5)
 
         TEST :
-            
+
         If the factor to scale by is not in the field of definition, it should raise an error ::
-            
+
             sage: FF.<z> = GF(331^2)
             sage: P.scale(z)
             Traceback (most recent call last):
@@ -639,7 +639,7 @@ class VarietyThetaStructurePoint(SchemeMorphism_point):
             raise ValueError(f'The scalar factor k={k} should be in the base ring R={self._R}')
         v = self._coords
         A = self.scheme()
-        return A.point((k * i for i in v))
+        return A.point(k * i for i in v)
 
     def compatible_lift(self, l, other=None, add=None):
         """
@@ -647,15 +647,15 @@ class VarietyThetaStructurePoint(SchemeMorphism_point):
         theta null point.
 
         INPUT :
-        
+
         - ``self`` -- an l-torsion point of the abelian variety
-        
+
         - ``other`` -- a list of points of the abelian variety, or None if only the lift of an l-torsion
           point is needed.
-        
+
         - ``add`` -- the list of sums self + P for all the points in P, or None if only the lift of an l-torsion
           point is needed.
-        
+
         - ``l`` -- the torsion
 
 
@@ -820,7 +820,7 @@ class AbelianVarietyPoint(VarietyThetaStructurePoint):
 
         OUTPUT: The theta point `self + Q`. If `self`, `Q` and `PmQ` are good lifts,
         then the output is also a good lift.
-        
+
         EXAMPLES ::
 
             sage: from thetAV import AbelianVariety
@@ -976,9 +976,9 @@ class KummerVarietyPoint(VarietyThetaStructurePoint):
 
         OUTPUT: The theta point `self + Q`. If `self`, `Q` and `PmQ` are good lifts,
         then the output is also a good lift.
-        
+
         EXAMPLES ::
-        
+
             sage: from thetAV import KummerVariety
             sage: R.<X> = PolynomialRing(GF(331))
             sage: poly = X^4 + 3*X^2 + 290*X + 3
@@ -991,7 +991,7 @@ class KummerVarietyPoint(VarietyThetaStructurePoint):
             ....: 258*t^3 + 39*t^2 + 313*t + 150 , 1])
             sage: PQ = P.diff_add(Q, PmQ); PQ
             (261*t^3 + 107*t^2 + 37*t + 135 : 205*t^3 + 88*t^2 + 195*t + 125 : 88*t^3 + 99*t^2 + 164*t + 98 : 159*t^3 + 279*t^2 + 254*t + 276)
-        
+
         """
         point0 = self.kummer_variety()
         n = 2
@@ -1100,7 +1100,7 @@ class KummerVarietyPoint(VarietyThetaStructurePoint):
             sage: A = KummerVariety(GF(331), 2, [328 , 213 , 75 , 1])
             sage: P = A([255 , 89 , 30 , 1]); - P
             (255 : 89 : 30 : 1)
-            
+
         """
         return self
 

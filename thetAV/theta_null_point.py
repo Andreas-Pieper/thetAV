@@ -105,9 +105,9 @@ class Variety_ThetaStructure(AlgebraicScheme):
         variety, then self and X are equal if and only if their fields
         of definition are equal and their theta null points are equal
         as projective points.
-        
+
         EXAMPLES ::
-        
+
             sage: from thetAV import AbelianVariety, KummerVariety
             sage: F1 = GF(331); F2 = GF(331^2)
             sage: pt = [328 , 213 , 75 , 1]
@@ -122,7 +122,7 @@ class Variety_ThetaStructure(AlgebraicScheme):
             sage: A = AbelianVariety(F1, 4, 2, pt2)
             sage: A == K1
             False
-            
+
         """
         if not isinstance(X, Variety_ThetaStructure):
             return NotImplemented
@@ -146,9 +146,9 @@ class Variety_ThetaStructure(AlgebraicScheme):
     def level(self):
         """
         Return the level of the theta structure.
-        
+
         TEST ::
-            
+
             sage: from thetAV import KummerVariety
             sage: F = GF(331)
             sage: K = KummerVariety(F, 2, [328 , 213 , 75 , 1])
@@ -467,7 +467,7 @@ class Variety_ThetaStructure(AlgebraicScheme):
         lg = l ** g
 
         support = [range(l)] * g + [range(r)]
-        rows = list(accumulate((len(lst) for lst in pts)))
+        rows = list(accumulate(len(lst) for lst in pts))
 
         K = [[None] * lg for i in range(r)]
         # The cantor_product iterator guarantees that when we reach a certain element
@@ -539,7 +539,7 @@ class AbelianVariety_ThetaStructure(Variety_ThetaStructure):
         sage: FF2 = GF(10753)
         sage: A2 = AbelianVariety(FF2, 4, 1, [732,45,98,7]); A2
         Abelian variety of dimension 1 with theta null point (732 : 45 : 98 : 7) defined over Finite Field of size 10753
-        
+
     """
     _point = AbelianVarietyPoint
 
@@ -675,7 +675,7 @@ class KummerVariety(Variety_ThetaStructure):
         sage: FF1 = GF(331)
         sage: K1 = KummerVariety(FF1, 2, [328,213,75,1]); K1
         Kummer variety of dimension 2 with theta null point (328 : 213 : 75 : 1) defined over Finite Field of size 331
-        
+
     """
     _point = KummerVarietyPoint
     _level = 2

@@ -57,7 +57,7 @@ class SageConsoleLexer(PythonConsoleLexer):
                     curcode = ''
                     insertions = []
                 if (line.startswith('Traceback (most recent call last):') or
-                        re.match(' {2}File "[^"]+", line \d+\n$', line)):
+                        re.match(' {2}File "[^"]+", line \\d+\n$', line)):
                     tb = 1
                     curtb = line
                     tbindex = match.start()

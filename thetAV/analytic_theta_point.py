@@ -40,13 +40,13 @@ class AnalyticThetaPoint:
     Components:
     - level, // an integer
     - coord, // a ThetaStructure of level 2 and g = 2*g
-    
+
     .. todo:: Refactor class
-    
+
         - Add examples to all class functions
-        
+
         - Add _repr_ to the classes and modify the examples accordingly
-        
+
         - Field of definition
     """
 
@@ -273,7 +273,7 @@ class AnalyticThetaNullPoint:
         """
         Compare the analytic theta null point self to X.  If X is an
         analytic theta null point, then self and X are equal if and only
-        if their fields of definition are equal and their theta null 
+        if their fields of definition are equal and their theta null
         points are equal as projective points.
         """
         if not isinstance(X, type(self)):
@@ -414,7 +414,8 @@ class AnalyticThetaNullPoint:
         """
         if self._curve is None:
             if self.dimension() == 2:
-                idx = lambda c: ZZ(list(c), 2)
+                def idx(c):
+                    return ZZ(list(c), 2)
                 k = self.level()/2
                 F = self._R
                 l = (self[0]*self[idx([0,1,0,0])]/(self[idx([1,0,0,0])]*self[idx([1,1,0,0])]))**k
@@ -448,7 +449,7 @@ class AnalyticThetaNullPoint:
 
     def _root(self):
         """
-        Chosen square root of the difference between the x-coordinates 
+        Chosen square root of the difference between the x-coordinates
         of the first two Weierstrass points (a[0] - a[1]).
         """
         if self._rac is not None:

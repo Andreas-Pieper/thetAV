@@ -50,7 +50,7 @@ def MumfordToTheta_4_Generic(a, rac, thc, points):
     Assume that all P_i are distinct.
 
     Return the theta functions of level 4 associated to points.
-    
+
     .. todo:: Test against Magma, add examples
     """
     if thc.level() != 4:
@@ -329,7 +329,7 @@ def Ylm_fromTheta(a, rac, l, m, th, C):
     Let C be the choice of sets in the definition of the f_A
 
     Compute the function Y_{l,m}
-    
+
     .. todo:: Test against Magma, add examples.
     """
     thc = th.abelian_variety()
@@ -368,7 +368,7 @@ def ThetaToMumford_4_Generic(a, rac, th):
     Let thc be the theta constants of level 4
 
     Compute the Mumford polynomials associated to D
-    
+
     .. todo:: Test against Magma, add examples
     """
     thc = th.abelian_variety()
@@ -429,7 +429,7 @@ def Level4ThetaPointToMumford(a, rac, th):
     Let rac be a root of a_1 - a_0
 
     Compute the Mumford polynomials associated to D
-    
+
     .. todo:: Test against Magma, add examples
     """
     thc = th.abelian_variety()

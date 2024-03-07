@@ -37,23 +37,23 @@ def AbelianVariety(*data, **kwargs):
     structure (see :class:`~thetAV.abelian_variety.AbelianVariety_ThetaStructure`).
 
     OUTPUT: a modular abelian variety with extra structure.
-    
+
     EXAMPLES:
-    
+
     Giving the data of the theta structure associated to an Abelian Variety we can create an instance of :class:`~thetAV.abelian_variety.AbelianVariety_ThetaStructure`::
-    
+
         sage: from thetAV import AbelianVariety
         sage: AbelianVariety(GF(331), 4, 1, [328,213,75,1])
         Abelian variety of dimension 1 with theta null point (328 : 213 : 75 : 1) defined over Finite Field of size 331
-        
+
     If the level of the abelian variety is 2, it correctly returns an instance of :class:`~thetAV.abelian_variety.KummerVariety_ThetaStructure`::
-    
+
         sage: from thetAV import AbelianVariety
         sage: AbelianVariety(GF(331), 2, 2, [328,213,75,1])
         Kummer variety of dimension 2 with theta null point (328 : 213 : 75 : 1) defined over Finite Field of size 331
-    
+
     But the function is also compatible with the functionality currently available in SageMath::
-    
+
         sage: AbelianVariety(Gamma0(37))
         Abelian variety J0(37) of dimension 2
         sage: AbelianVariety('37a')
@@ -72,9 +72,9 @@ def AbelianVariety(*data, **kwargs):
         TypeError: X must be an integer, string, newform, modsym space, congruence subgroup or tuple of congruence subgroups
 
     TEST:
-    
+
     The constructor should also pass the named parameters::
-    
+
         sage: from thetAV import *
         sage: F.<z> = GF(83^2)
         sage: T = [68, z + 33, 46, z + 33, 2*z + 29, 77*z + 58, 81*z + 31, 38*z + 16, 8, 67*z + 53, 48, 67*z + 53, 2*z + 29, 38*z + 16, 81*z + 31, 77*z + 58]
@@ -141,7 +141,8 @@ def _from_curve(C, level=4):
     l, m, n = a[2:]
     D = Zmod(2) ** 4
     ng = 2 ** 4
-    idx = lambda c: ZZ(list(c), 2)
+    def idx(c):
+        return ZZ(list(c), 2)
     th4 = [m / (l * n), m * (l - m) * (n - 1) / (n * (m - 1) * (l - n)), m * (l - 1) * (n - 1) / (l * n * (m - 1)),
            m * (l - 1) * (n - m) / (l * (n - l) * (m - 1))]
     th2 = [F(1)] + [F(0)] * (ng - 1)

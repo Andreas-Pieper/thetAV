@@ -28,24 +28,24 @@ The first half is from [VanW]_ and the last sections are algorithms from [Coss]_
 Based on the Magma implementation by Romain Cosset.
 
 LAYOUT:
-   
+
     3 - Manipulations of elements of Ep
-    
+
     4 - twisted theta
-    
+
     3 - Auxiliary functions
-    
+
     4 - Expression of Ep
-    
+
     6 - Mumford to Theta
-    
+
     7 - Theta to Mumford
 
 .. todo::
 
     - Reformat info above.
     - Sort documentation by source (to maintain layout)
-    
+
 """
 
 
@@ -68,13 +68,13 @@ def compatible_sqrt(g, i, j):
     r"""
     Return the numerator and the denominator of sqrt(a_i - a_j) given by Definition 2
     in [VanW, page 3093] as an element of Ep.
-    
+
     .. math ::
-    
+
         \sqrt{\langle a_0 - a_j\rangle} = \sqrt{\langle a_0 - a_1\rangle} \frac{\theta[\eta_{U \circ V \circ \{j, \infty\}}]\theta[\eta_{U \circ V \circ \{0, 1\}}]}{\theta[\eta_{U \circ V \circ \{1, \infty\}}]\theta[\eta_{U \circ V \circ \{0, j\}}]}
-        
+
     .. math ::
-    
+
         \sqrt{\langle a_j - a_i\rangle} = \sqrt{\langle a_j - a_0\rangle} \frac{\theta[\eta_{U \circ V \circ \{i, \infty\}}]\theta[\eta_{U \circ V \circ \{0, j\}}]}{\theta[\eta_{U \circ V \circ \{0, \infty\}}]\theta[\eta_{U \circ V \circ \{i, j\}}]}
 
     EXAMPLES::
@@ -103,7 +103,8 @@ def compatible_sqrt(g, i, j):
         U = {2*x for x in range(g+1)}
         W = U.symmetric_difference(V)
 
-        idx = lambda x : ZZ([c%2 for c in x], 2)
+        def idx(x):
+            return ZZ([c % 2 for c in x], 2)
         ej = eta(g, W ^ {2*g + 1, j})
         e01 = eta(g, W ^ {0,1})
         e1 = eta(g, W ^ {2*g + 1, 1})
@@ -127,7 +128,8 @@ def compatible_sqrt(g, i, j):
     W = U.symmetric_difference(L)
 
     a = compatible_sqrt(g, 0, i)
-    idx = lambda x : ZZ([c%2 for c in x], 2)
+    def idx(x):
+        return ZZ([c % 2 for c in x], 2)
     e0i = eta(g, W ^ {0,i})
     ej = eta(g, W ^ {2*g + 1, j})
     e0 = eta(g, W ^ {2*g + 1, 0})
@@ -181,7 +183,8 @@ def constant_f(g, A, C):
     U = {2*x for x in range(g+1)}
 
     # The two theta constants which appear in the definition
-    idx = lambda x : ZZ([s%2 for s in x], 2)
+    def idx(x):
+        return ZZ([s % 2 for s in x], 2)
     eC = eta(g, C)
     eUAC = eta(g, (U ^ A) ^ C)
     f['numer'] = Counter([idx(eC)])
@@ -358,7 +361,8 @@ def IgusaTheorem(A, TH):
     a1, a2, a3, a4 = A
     N = [sum(A)/2, (a1 + a2 - a3 - a4)/2, (a1 - a2 + a3 - a4)/2, (a1 - a2 - a3 + a4)/2]
     p = 0
-    idx = lambda x : ZZ(list(x), 2)
+    def idx(x):
+        return ZZ(list(x), 2)
 
     for a in D:
         a = V(a)
@@ -368,7 +372,7 @@ def IgusaTheorem(A, TH):
         p += t
 
     return p/2**g
-    
+
 ##***** (4) Expression of Ep *****//
 
 def constant_f2_level2(a, thc, A, C):
@@ -506,7 +510,7 @@ def YS_fromMumford_Delta(g, a, S, points, F): #DIFF: Not tested against Magma
         Y+=t
 
     #Cases where I contains exactly one of the two.
-    
+
     # With the formula in [Coss]_, t would be computed as follows
 
     # for I in combinations(range(g-2), n-1):
