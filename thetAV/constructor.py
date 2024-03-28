@@ -24,7 +24,7 @@ from sage.modular.abvar.constructor import AbelianVariety as ModularAbelianVarie
 from sage.rings.finite_rings.integer_mod_ring import Zmod
 from sage.schemes.hyperelliptic_curves.hyperelliptic_g2 import HyperellipticCurve_g2
 
-from . import theta_null_point, analytic_theta_point, aux_hyper
+from . import analytic_theta_point, aux_hyper, theta_null_point
 
 
 def AbelianVariety(*data, **kwargs):

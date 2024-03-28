@@ -21,23 +21,23 @@ AUTHORS:
 #                                    https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from itertools import combinations, chain
+from itertools import chain, combinations
 
 from sage.arith.misc import XGCD
 from sage.functions.other import floor
 from sage.misc.all import prod
-from sage.rings.all import PolynomialRing, ZZ, Integer
+from sage.rings.all import ZZ, Integer, PolynomialRing
 from sage.structure.element import parent
 
 from .eta_maps import eta, eta_prime, eta_second, normalize_eta, sign_theta_normalized
 from .morphisms_aux import (
-    choice_of_all_C_Cosset,
-    constant_f,
-    YS_fromMumford_Generic,
-    sign_s_A,
-    prodYp_fromMumford_with2torsion,
     IgusaTheorem,
     YS_fromMumford_Delta,
+    YS_fromMumford_Generic,
+    choice_of_all_C_Cosset,
+    constant_f,
+    prodYp_fromMumford_with2torsion,
+    sign_s_A,
 )
 from .tools import rangeS
 

@@ -20,19 +20,19 @@ AUTHORS:
 from itertools import product
 
 from sage.misc.misc_c import prod
-from sage.rings.all import ZZ, Zmod, Integer, PolynomialRing
+from sage.modules.free_module_element import FreeModuleElement
+from sage.rings.all import ZZ, Integer, PolynomialRing, Zmod
 from sage.schemes.generic.morphism import SchemeMorphism_point
 from sage.schemes.hyperelliptic_curves.constructor import HyperellipticCurve
 from sage.schemes.hyperelliptic_curves.jacobian_morphism import (
     JacobianMorphism_divisor_class_field,
 )
 from sage.structure.element import is_Vector, parent
-from sage.modules.free_module_element import FreeModuleElement
 
 from . import theta_null_point
-from .theta_point import VarietyThetaStructurePoint
 from .morphisms_level2 import MumfordToLevel2ThetaPoint
 from .morphisms_level4 import MumfordToLevel4ThetaPoint
+from .theta_point import VarietyThetaStructurePoint
 
 integer_types = (int, Integer)
 

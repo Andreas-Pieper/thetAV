@@ -46,23 +46,23 @@ LAYOUT:
 """
 
 
-from itertools import product, combinations, chain
+from itertools import chain, combinations, product
 
 from sage.functions.other import sqrt
 from sage.misc.all import prod
-from sage.rings.all import PolynomialRing, ZZ, Integer
+from sage.rings.all import ZZ, Integer, PolynomialRing
 from sage.structure.element import parent
 
 integer_types = (int, Integer)
 from sage.arith.misc import XGCD
 
-from .eta_maps import eta, eta_prime, eta_second, normalize_eta, e_2
+from .eta_maps import e_2, eta, eta_prime, eta_second, normalize_eta
 from .morphisms_aux import (
+    Y_fromMumford_with2torsion,
+    YS_fromMumford_Delta,
+    YS_fromMumford_Generic,
     choice_of_all_C_Cosset,
     constant_f2_level2,
-    YS_fromMumford_Generic,
-    YS_fromMumford_Delta,
-    Y_fromMumford_with2torsion,
     sign_s_A,
 )
 

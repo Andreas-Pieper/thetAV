@@ -49,17 +49,17 @@ LAYOUT:
 
 
 from collections import Counter
-from itertools import product, combinations, chain
+from itertools import chain, combinations, product
 
 from sage.functions.other import ceil, floor
-from sage.misc.all import prod, is_odd
-from sage.rings.all import PolynomialRing, ZZ, Integer
+from sage.misc.all import is_odd, prod
+from sage.rings.all import ZZ, Integer, PolynomialRing
 
 integer_types = (int, Integer)
 
-from .tools import rangeS
-from .eta_maps import eta, eta_prime, eta_second, normalize_eta, sign_theta_normalized
 from .ep_elements import EpElement
+from .eta_maps import eta, eta_prime, eta_second, normalize_eta, sign_theta_normalized
+from .tools import rangeS
 
 
 def compatible_sqrt(g, i, j):

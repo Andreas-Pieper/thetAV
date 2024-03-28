@@ -17,18 +17,18 @@ AUTHORS:
 # ****************************************************************************
 
 
-from functools import partial
-from itertools import product, combinations_with_replacement
 import warnings
+from functools import partial
+from itertools import combinations_with_replacement, product
 
 from sage.matrix.all import Matrix
 from sage.misc.all import ConstantFunction
-from sage.modules.free_module_element import vector, FreeModuleElement
-from sage.rings.all import PolynomialRing, Integer, ZZ
+from sage.modules.free_module_element import FreeModuleElement, vector
+from sage.rings.all import ZZ, Integer, PolynomialRing
 from sage.schemes.generic.morphism import SchemeMorphism_point
 from sage.structure.all import Sequence
 from sage.structure.element import AdditiveGroupElement
-from sage.structure.richcmp import richcmp_method, richcmp, op_EQ, op_NE
+from sage.structure.richcmp import op_EQ, op_NE, richcmp, richcmp_method
 
 from . import tools
 

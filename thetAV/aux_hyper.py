@@ -18,9 +18,9 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.categories.homset import hom
-from sage.schemes.hyperelliptic_curves.constructor import HyperellipticCurve
 from sage.functions.other import sqrt
 from sage.misc.misc_c import prod
+from sage.schemes.hyperelliptic_curves.constructor import HyperellipticCurve
 
 
 def remove_h(phi):

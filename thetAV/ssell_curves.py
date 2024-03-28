@@ -16,10 +16,10 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
+from sage.algebras.quatalg.quaternion_algebra import QuaternionAlgebraFactory
+from sage.misc.constant_function import ConstantFunction
 from sage.rings.all import ZZ, Integer, Zmod
 from sage.structure.coerce_maps import CallableConvertMap
-from sage.misc.constant_function import ConstantFunction
-from sage.algebras.quatalg.quaternion_algebra import QuaternionAlgebraFactory
 from sage.structure.richcmp import richcmp_method
 
 

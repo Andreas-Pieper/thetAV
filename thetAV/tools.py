@@ -16,9 +16,9 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 # *****************************************************************************
 
+from sage.misc.constant_function import ConstantFunction
 from sage.rings.all import ZZ, Integer, Zmod
 from sage.structure.coerce_maps import CallableConvertMap
-from sage.misc.constant_function import ConstantFunction
 
 integer_types = (int, Integer)
 

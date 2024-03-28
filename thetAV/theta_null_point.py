@@ -37,29 +37,28 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 # *****************************************************************************
 from functools import partial
-from itertools import product, combinations_with_replacement, accumulate
+from itertools import accumulate, combinations_with_replacement, product
 
-from sage.misc.mrange import cantor_product
 from sage.categories.fields import Fields
-from sage.rings.all import PolynomialRing, FractionField, ZZ, Zmod
+from sage.misc.functional import sqrt
+from sage.misc.mrange import cantor_product
+from sage.rings.all import ZZ, FractionField, PolynomialRing, Zmod
 from sage.rings.integer import Integer
 from sage.schemes.generic.algebraic_scheme import AlgebraicScheme
 from sage.schemes.generic.homset import SchemeHomset_points
 from sage.schemes.generic.morphism import SchemeMorphism_point
-from sage.schemes.projective.projective_space import ProjectiveSpace
-from sage.structure.element import is_Vector
-from sage.structure.richcmp import richcmp_method, richcmp, op_EQ, op_NE
 from sage.schemes.hyperelliptic_curves.jacobian_morphism import (
     JacobianMorphism_divisor_class_field,
 )
-from sage.misc.functional import sqrt
+from sage.schemes.projective.projective_space import ProjectiveSpace
+from sage.structure.element import is_Vector
+from sage.structure.richcmp import op_EQ, op_NE, richcmp, richcmp_method
 
-from . import analytic_theta_point, constructor
-from . import tools
+from . import analytic_theta_point, constructor, tools
 from .theta_point import (
-    VarietyThetaStructurePoint,
     AbelianVarietyPoint,
     KummerVarietyPoint,
+    VarietyThetaStructurePoint,
 )
 
 _Fields = Fields()
