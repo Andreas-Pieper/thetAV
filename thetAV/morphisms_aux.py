@@ -639,7 +639,6 @@ def YS_fromMumford_Delta(g, a, S, points, F):  # DIFF: Not tested against Magma
     t02 = 1 / prod(((points[i][0] - points[-1][0]) ** 2 for i in range(g - 2)), F(1))
 
     for I in combinations(range(g - 2), n - 1):
-
         t1 = t01 * prod(points[i][1] for i in I)
         t1 *= prod(
             points[k][0] - a[l] for l, k in product(S, range(g - 1)) if k not in I
