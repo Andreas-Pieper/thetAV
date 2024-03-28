@@ -91,16 +91,17 @@ def AbelianVariety(*data, **kwargs):
 
 
 def _with_theta_basis(label: str, *data, **kwargs):
-    if label == 'Fn':
+    if label == "Fn":
         return AbelianVariety(*data, **kwargs)
-    if label in ['F(2,2)', 'F(2,2)^2', 'classical']:
-        #TODO: add checks for level
+    if label in ["F(2,2)", "F(2,2)^2", "classical"]:
+        # TODO: add checks for level
         A = analytic_theta_point.AnalyticThetaNullPoint(*data, **kwargs)
         return A.to_algebraic()
-    raise ValueError(f'The basis {label} is either not implemented or unknown.')
+    raise ValueError(f"The basis {label} is either not implemented or unknown.")
 
 
-setattr(AbelianVariety, 'with_theta_basis', _with_theta_basis)
+setattr(AbelianVariety, "with_theta_basis", _with_theta_basis)
+
 
 def _from_curve(C, level=4):
     """
@@ -124,7 +125,9 @@ def _from_curve(C, level=4):
 
     """
     if not isinstance(C, HyperellipticCurve_g2):
-        raise NotImplementedError('Thomae formulas are only implemented for curves of genus 2.')
+        raise NotImplementedError(
+            "Thomae formulas are only implemented for curves of genus 2."
+        )
     F = C.base_ring()
     f, h = C.hyperelliptic_polynomials()
     phi = C.identity_morphism()
@@ -133,18 +136,24 @@ def _from_curve(C, level=4):
         f, _ = phi.codomain().hyperelliptic_polynomials()
     a = sum(([el] * m for el, m in f.roots()), [])
     if len(a) not in [5, 6]:
-        raise ValueError('No Rosenhain model exists over field of definition')
+        raise ValueError("No Rosenhain model exists over field of definition")
     phi = aux_hyper.rosenhain_model(phi)
     f, _ = phi.codomain().hyperelliptic_polynomials()
     a = sum(([el] * m for el, m in f.roots()), [])
     a.sort()
     l, m, n = a[2:]
     D = Zmod(2) ** 4
-    ng = 2 ** 4
+    ng = 2**4
+
     def idx(c):
         return ZZ(list(c), 2)
-    th4 = [m / (l * n), m * (l - m) * (n - 1) / (n * (m - 1) * (l - n)), m * (l - 1) * (n - 1) / (l * n * (m - 1)),
-           m * (l - 1) * (n - m) / (l * (n - l) * (m - 1))]
+
+    th4 = [
+        m / (l * n),
+        m * (l - m) * (n - 1) / (n * (m - 1) * (l - n)),
+        m * (l - 1) * (n - 1) / (l * n * (m - 1)),
+        m * (l - 1) * (n - m) / (l * (n - l) * (m - 1)),
+    ]
     th2 = [F(1)] + [F(0)] * (ng - 1)
     if not all(el.is_square() for el in th4):
         F, to_F = F.extension(2, map=True)
@@ -153,21 +162,40 @@ def _from_curve(C, level=4):
         th2[idx(ei)] = sqrt(th4[i])
     th2[idx([1, 0, 0, 1])] = 1 / n * th2[idx([0, 0, 0, 1])] / th2[idx([1, 0, 0, 0])]
     th2[idx([1, 1, 0, 0])] = 1 / l * th2[idx([0, 1, 0, 0])] / th2[idx([1, 0, 0, 0])]
-    th2[idx([0, 0, 1, 1])] = (n - 1) * th2[idx([1, 0, 0, 0])] * th2[idx([1, 0, 0, 1])] / th2[idx([0, 0, 1, 0])]
-    th2[idx([0, 1, 1, 0])] = (l - 1) * th2[idx([1, 0, 0, 0])] * th2[idx([1, 1, 0, 0])] / th2[idx([0, 0, 1, 0])]
-    th2[idx([1, 1, 1, 1])] = (n - m) / (n - 1) * th2[idx([0, 0, 1, 0])] * th2[idx([1, 1, 0, 0])] / th2[
-        idx([0, 0, 0, 1])]
+    th2[idx([0, 0, 1, 1])] = (
+        (n - 1)
+        * th2[idx([1, 0, 0, 0])]
+        * th2[idx([1, 0, 0, 1])]
+        / th2[idx([0, 0, 1, 0])]
+    )
+    th2[idx([0, 1, 1, 0])] = (
+        (l - 1)
+        * th2[idx([1, 0, 0, 0])]
+        * th2[idx([1, 1, 0, 0])]
+        / th2[idx([0, 0, 1, 0])]
+    )
+    th2[idx([1, 1, 1, 1])] = (
+        (n - m)
+        / (n - 1)
+        * th2[idx([0, 0, 1, 0])]
+        * th2[idx([1, 1, 0, 0])]
+        / th2[idx([0, 0, 0, 1])]
+    )
     if level == 2:
-        A = analytic_theta_point.AnalyticThetaNullPoint(F, 2, 2, th2, curve=C, phi=phi, wp=[0, 1, l, m, n], rac=F(1))
+        A = analytic_theta_point.AnalyticThetaNullPoint(
+            F, 2, 2, th2, curve=C, phi=phi, wp=[0, 1, l, m, n], rac=F(1)
+        )
     else:
         if not all(el.is_square() for el in th2):
             F, to_F = F.extension(2, map=True)
             th2 = [to_F(el) for el in th2]
         th = [sqrt(el) for el in th2]
         wp = [F(el) for el in [0, 1, l, m, n]]
-        A = analytic_theta_point.AnalyticThetaNullPoint(F, 4, 2, th, curve=C, phi=phi, wp=wp, rac=F(1))
+        A = analytic_theta_point.AnalyticThetaNullPoint(
+            F, 4, 2, th, curve=C, phi=phi, wp=wp, rac=F(1)
+        )
     return A.to_algebraic()
 
 
-setattr(AbelianVariety, 'from_curve', _from_curve)
-setattr(theta_null_point.KummerVariety, 'from_curve', partial(_from_curve, level=2))
+setattr(AbelianVariety, "from_curve", _from_curve)
+setattr(theta_null_point.KummerVariety, "from_curve", partial(_from_curve, level=2))

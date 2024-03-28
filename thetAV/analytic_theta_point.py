@@ -23,7 +23,9 @@ from sage.misc.misc_c import prod
 from sage.rings.all import ZZ, Zmod, Integer, PolynomialRing
 from sage.schemes.generic.morphism import SchemeMorphism_point
 from sage.schemes.hyperelliptic_curves.constructor import HyperellipticCurve
-from sage.schemes.hyperelliptic_curves.jacobian_morphism import JacobianMorphism_divisor_class_field
+from sage.schemes.hyperelliptic_curves.jacobian_morphism import (
+    JacobianMorphism_divisor_class_field,
+)
 from sage.structure.element import is_Vector, parent
 from sage.modules.free_module_element import FreeModuleElement
 
@@ -50,7 +52,9 @@ class AnalyticThetaPoint:
         - Field of definition
     """
 
-    def __init__(self, thc, v):  # Equivalent to "AnalyticThetaPoint" intrinsic method in magma
+    def __init__(
+        self, thc, v
+    ):  # Equivalent to "AnalyticThetaPoint" intrinsic method in magma
         lvl = thc.level()
         if lvl not in [2, 4]:
             raise NotImplementedError
@@ -81,7 +85,7 @@ class AnalyticThetaPoint:
         else:
             points = sum(([phi([x, v(x), 1])[:2]] * mult for x, mult in u.roots()), [])
         if len(points) != u.degree():
-            raise ValueError('Support not defined over field of definition')
+            raise ValueError("Support not defined over field of definition")
         if th.level() == 2:
             return MumfordToLevel2ThetaPoint(wp, th, points)
         if th.level() == 4:
@@ -99,16 +103,21 @@ class AnalyticThetaPoint:
         n = tnp.level()
         g = tnp.dimension()
         D = tnp._D
-        point = [0] * (4 ** g)
+        point = [0] * (4**g)
 
         if thc is None:
-            basis = 'F(2,2)' if n == 4 else 'F(2,2)^2'
+            basis = "F(2,2)" if n == 4 else "F(2,2)^2"
             thc = tnp._with_theta_basis(basis)
 
         if n == 2:
             for (idxa, a), (idxb, b) in product(enumerate(D), repeat=2):
-                point[idxa + 2 ** g * idxb] = sum(
-                    (-1) ** ZZ(a * beta) * th[b + beta] * P0[idxbeta] for idxbeta, beta in enumerate(D)) / 2 ** g
+                point[idxa + 2**g * idxb] = (
+                    sum(
+                        (-1) ** ZZ(a * beta) * th[b + beta] * P0[idxbeta]
+                        for idxbeta, beta in enumerate(D)
+                    )
+                    / 2**g
+                )
 
             return thc.point(point)
 
@@ -116,8 +125,10 @@ class AnalyticThetaPoint:
             twotorsion = tnp._twotorsion  # Zmod(2)^g
             for (idxa, a), (idxb, b) in product(enumerate(twotorsion), repeat=2):
                 Db = D(list(b))
-                point[idxa + 2 ** g * idxb] = sum(
-                    (-1) ** (a * beta) * th[Db + beta] for beta in twotorsion) / 2 ** g
+                point[idxa + 2**g * idxb] = (
+                    sum((-1) ** (a * beta) * th[Db + beta] for beta in twotorsion)
+                    / 2**g
+                )
 
             return thc.point(point)
 
@@ -157,7 +168,9 @@ class AnalyticThetaPoint:
         """
         return f'({" : ".join(repr(f) for f in self._coords)})'
 
-    def to_algebraic(self, A=None, **kwargs):  # Corresponds to `AnalyticToAlgebraicThetaPoint` in magma
+    def to_algebraic(
+        self, A=None, **kwargs
+    ):  # Corresponds to `AnalyticToAlgebraicThetaPoint` in magma
         """
         Compute the algebraic theta point corresponding to an analytic theta point.
 
@@ -172,7 +185,7 @@ class AnalyticThetaPoint:
         thc = self.abelian_variety()
         n = thc.level()
         g = thc.dimension()
-        ng = n ** g
+        ng = n**g
         point = [0] * ng
         idx = thc._char_to_idx
 
@@ -181,14 +194,14 @@ class AnalyticThetaPoint:
 
         if n == 2:
             for b in range(ng):
-                point[b] = sum(self[a + 2 ** g * b] for a in range(ng))
-            P = A(point, with_theta_basis={'F(2,2)^2': self}, **kwargs)
+                point[b] = sum(self[a + 2**g * b] for a in range(ng))
+            P = A(point, with_theta_basis={"F(2,2)^2": self}, **kwargs)
             return P
 
         # if n == 4:
         D = Zmod(n) ** g
         twotorsion = Zmod(2) ** g
-        V = ZZ ** g
+        V = ZZ**g
 
         for idxb, b in enumerate(D):  # char(b) in Zmod(4)^g
             for a in twotorsion:
@@ -198,7 +211,7 @@ class AnalyticThetaPoint:
                 point[idxb] += self[idx(a, ttb)] * sign
 
         P = A(point, **kwargs)
-        P._with_theta_basis['F(2,2)'] = self
+        P._with_theta_basis["F(2,2)"] = self
         return P
 
     def add_twotorsion_point(self, eta):
@@ -232,7 +245,7 @@ class AnalyticThetaPoint:
                 t[idxe] *= (-1) ** ZZ(e[:g] * eta[g:] + eta[:g] * e[g:])
             return thc(t)
 
-        raise NotImplementedError('Only implemented for level 2 and 4.')
+        raise NotImplementedError("Only implemented for level 2 and 4.")
 
 
 class AnalyticThetaNullPoint:
@@ -252,14 +265,16 @@ class AnalyticThetaNullPoint:
         if is_Vector(v):
             v = list(v)
         if not isinstance(v, (list, tuple, SchemeMorphism_point)):
-            raise TypeError(f"Argument (v={v}) must be a list, a tuple, a vector or a point.")
+            raise TypeError(
+                f"Argument (v={v}) must be a list, a tuple, a vector or a point."
+            )
         if not isinstance(l, integer_types + (Integer,)):
             raise TypeError(f"Argument (l={l}) must be an integer.")
         if not isinstance(g, integer_types + (Integer,)):
             raise TypeError(f"Argument (g={g}) must be an integer.")
         self._level = l
         if len(v) != 2 ** (2 * g):
-            raise ValueError(f'v(={v}) does not define a valid analytic thetanullpoint')
+            raise ValueError(f"v(={v}) does not define a valid analytic thetanullpoint")
         self._R = R
         self._coords = tuple(R(el) for el in v)
         self._dimension = g
@@ -353,7 +368,9 @@ class AnalyticThetaNullPoint:
         """
         return f'({" : ".join(repr(f) for f in self._coords)})'
 
-    def to_algebraic(self):  # Equivalent to `AnalyticToAlgebraicThetaNullPoint` in magma
+    def to_algebraic(
+        self,
+    ):  # Equivalent to `AnalyticToAlgebraicThetaNullPoint` in magma
         """
         Compute the algebraic theta null point corresponding to an analytic theta null point.
 
@@ -369,16 +386,16 @@ class AnalyticThetaNullPoint:
 
         n = self.level()
         g = self.dimension()
-        ng = n ** g
+        ng = n**g
         point = [0] * ng
-        R = parent(self._coords[0])  #FIXME Field of definition rework
+        R = parent(self._coords[0])  # FIXME Field of definition rework
 
         if n == 2:
             for b in range(ng):  # char(b) in Zmod(2)^g
-                point[b] = sum(self._coords[a + 2 ** g * b] for a in range(ng))
+                point[b] = sum(self._coords[a + 2**g * b] for a in range(ng))
             assert point[0] != 0  # See Equation (3.12) in [Coss]
             K = theta_null_point.KummerVariety(R, g, point)
-            K._with_theta_basis['F(2,2)^2'] = self
+            K._with_theta_basis["F(2,2)^2"] = self
             return K
 
         # if n == 4:
@@ -386,6 +403,7 @@ class AnalyticThetaNullPoint:
         twotorsion = Zmod(2) ** g
         if not D.has_coerce_map_from(twotorsion):
             from sage.structure.coerce_maps import CallableConvertMap
+
             s = n // 2
 
             def c(P, el):
@@ -394,18 +412,20 @@ class AnalyticThetaNullPoint:
             c = CallableConvertMap(twotorsion, D, c)
             D.register_coercion(c)
 
-        V = ZZ ** g
+        V = ZZ**g
         idx = self._char_to_idx
 
         for idxb, b in enumerate(D):  # char(b) in Zmod(4)^g
             for a in twotorsion:
                 ttb = twotorsion(b)
-                ib = D((V(b) - V(ttb)) / 2)  # Probably very inefficient, look for an alternative
+                ib = D(
+                    (V(b) - V(ttb)) / 2
+                )  # Probably very inefficient, look for an alternative
                 sign = (-1) ** ZZ(a * ib)
                 point[idxb] += self._coords[idx(a, ttb)] * sign
 
         A = theta_null_point.AbelianVariety_ThetaStructure(R, n, g, point)
-        A._with_theta_basis['F(2,2)'] = self
+        A._with_theta_basis["F(2,2)"] = self
         return A
 
     def curve(self, phi=False):
@@ -414,18 +434,32 @@ class AnalyticThetaNullPoint:
         """
         if self._curve is None:
             if self.dimension() == 2:
+
                 def idx(c):
                     return ZZ(list(c), 2)
-                k = self.level()/2
+
+                k = self.level() / 2
                 F = self._R
-                l = (self[0]*self[idx([0,1,0,0])]/(self[idx([1,0,0,0])]*self[idx([1,1,0,0])]))**k
-                m = (self[idx([0,0,0,1])]*self[idx([0,1,0,0])]/(self[idx([1,0,0,1])]*self[idx([1,1,0,0])]))**k
-                n = (self[0]*self[idx([0,0,0,1])]/(self[idx([1,0,0,0])]*self[idx([1,0,0,1])]))**k
-                R = PolynomialRing(F, 'x')
+                l = (
+                    self[0]
+                    * self[idx([0, 1, 0, 0])]
+                    / (self[idx([1, 0, 0, 0])] * self[idx([1, 1, 0, 0])])
+                ) ** k
+                m = (
+                    self[idx([0, 0, 0, 1])]
+                    * self[idx([0, 1, 0, 0])]
+                    / (self[idx([1, 0, 0, 1])] * self[idx([1, 1, 0, 0])])
+                ) ** k
+                n = (
+                    self[0]
+                    * self[idx([0, 0, 0, 1])]
+                    / (self[idx([1, 0, 0, 0])] * self[idx([1, 0, 0, 1])])
+                ) ** k
+                R = PolynomialRing(F, "x")
                 x = R.gen()
-                f = prod([x - el for el in [F(0),F(1),l,m,n]])
+                f = prod([x - el for el in [F(0), F(1), l, m, n]])
                 return HyperellipticCurve(f)
-            raise NotImplementedError('Curve not indicated upon creation.')
+            raise NotImplementedError("Curve not indicated upon creation.")
         return self._curve if not phi else [self._curve, self._phi]
 
     def _weierstrass_points(self):
@@ -437,14 +471,18 @@ class AnalyticThetaNullPoint:
         C = self.curve()
         f, h = C.hyperelliptic_polynomials()
         if h != 0:
-            f = f + h ** 2 / 4
+            f = f + h**2 / 4
         if f.degree() % 2 == 0:
             C2 = HyperellipticCurve(f)
             f, _ = C2.odd_degree_model().hyperelliptic_polynomials()
-        F = f.splitting_field('z')
+        F = f.splitting_field("z")
         a = f.roots(F, multiplicities=False)
         a.sort()
-        self._wp = a if a[:2] == [0, 1] else [0, 1] + [(el - a[0]) / (a[0] - a[1]) for el in a[2:]]
+        self._wp = (
+            a
+            if a[:2] == [0, 1]
+            else [0, 1] + [(el - a[0]) / (a[0] - a[1]) for el in a[2:]]
+        )
         return self._wp
 
     def _root(self):
@@ -458,4 +496,6 @@ class AnalyticThetaNullPoint:
         if wp[:2] == [0, 1]:
             self._rac = 1
             return 1
-        raise NotImplementedError('Square root of (a_1 - a_0) not indicated upon creation.')
+        raise NotImplementedError(
+            "Square root of (a_1 - a_0) not indicated upon creation."
+        )

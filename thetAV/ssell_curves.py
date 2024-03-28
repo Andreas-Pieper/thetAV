@@ -43,8 +43,10 @@ class SupersingularEndomorphismStructure:
     def asPoint(E, E1, phi):
         K = E.affine_patch(2).coordinate_ring().fraction_field()
         E1_ = E1.change_ring(K)
-        return E1_(phi.rational_maps()[0](K.zero(), K.one()),
-                   phi.rational_maps()[1](K.zero(), K.one()))
+        return E1_(
+            phi.rational_maps()[0](K.zero(), K.one()),
+            phi.rational_maps()[1](K.zero(), K.one()),
+        )
 
     # def Endomorphism(self, r):
     #     return asMap(Str.E, sum(Integers()![x[1][i]] * asPoint(self.indep[i], E_) for i in range(4)))

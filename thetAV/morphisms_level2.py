@@ -8,7 +8,6 @@ AUTHORS:
 
 """
 
-
 # ****************************************************************************
 #             Copyright (C) 2022 Anna Somoza <anna.somoza.henares@gmail.com>
 #
@@ -58,7 +57,14 @@ integer_types = (int, Integer)
 from sage.arith.misc import XGCD
 
 from .eta_maps import eta, eta_prime, eta_second, normalize_eta, e_2
-from .morphisms_aux import choice_of_all_C_Cosset, constant_f2_level2, YS_fromMumford_Generic, YS_fromMumford_Delta, Y_fromMumford_with2torsion, sign_s_A
+from .morphisms_aux import (
+    choice_of_all_C_Cosset,
+    constant_f2_level2,
+    YS_fromMumford_Generic,
+    YS_fromMumford_Delta,
+    Y_fromMumford_with2torsion,
+    sign_s_A,
+)
 
 
 def MumfordToTheta_2_Generic(a, thc2, points):
@@ -87,49 +93,54 @@ def MumfordToTheta_2_Generic(a, thc2, points):
 
     """
     if thc2.level() != 2:
-        raise ValueError(F'Expected level-2 theta structure.')
+        raise ValueError(f"Expected level-2 theta structure.")
 
     g = thc2.dimension()
     if len(points) != g:
-        raise ValueError(F'Expected degree-{g} divisor')
+        raise ValueError(f"Expected degree-{g} divisor")
 
     F = thc2._R
-    K = PolynomialRing(F, 'x')
+    K = PolynomialRing(F, "x")
     x = K.gen()
     u = prod(x - point[0] for point in points)
 
     if any(u(elem) == 0 for elem in a):
-        raise ValueError(F'Expected generic divisor')
+        raise ValueError(f"Expected generic divisor")
 
-    C = choice_of_all_C_Cosset(g) # all other choices should give the same result
-    U = {2*x for x in range(g+1)}
+    C = choice_of_all_C_Cosset(g)  # all other choices should give the same result
+    U = {2 * x for x in range(g + 1)}
 
     idx = thc2._char_to_idx
-    th2 = [0]*(2**(2*g))
+    th2 = [0] * (2 ** (2 * g))
     e = eta(g, U, normalized=True)
-    th2[idx(e)] = 1/constant_f2_level2(a, thc2, set(), C[frozenset()])
+    th2[idx(e)] = 1 / constant_f2_level2(a, thc2, set(), C[frozenset()])
 
-    for l in range(2*g + 1):
+    for l in range(2 * g + 1):
         ee = normalize_eta(e + eta(g, l))
         i = idx(ee)
-        th2[i] = (-1)**g*u(a[l])
+        th2[i] = (-1) ** g * u(a[l])
         th2[i] /= constant_f2_level2(a, thc2, {l}, C[frozenset({l})])
 
     lpoints = len(set(points))
-    for S in chain.from_iterable(combinations(range(2*g + 1), r) for r in range(2, g+1)):
+    for S in chain.from_iterable(
+        combinations(range(2 * g + 1), r) for r in range(2, g + 1)
+    ):
         if lpoints == g:
             YS = YS_fromMumford_Generic(g, a, S, points)
         elif lpoints == g - 1:
             YS = YS_fromMumford_Delta(g, a, S, points, F)
         else:
-            raise NotImplementedError('The case of non generic delta divisor is not implemented')
+            raise NotImplementedError(
+                "The case of non generic delta divisor is not implemented"
+            )
         ee = normalize_eta(e + eta(g, S))
         i = idx(ee)
-        th2[i] = YS**2*(-1)**(g*len(S))
+        th2[i] = YS**2 * (-1) ** (g * len(S))
         th2[i] /= prod(u(a[l]) for l in S)
         th2[i] /= constant_f2_level2(a, thc2, set(S), C[frozenset(S)])
 
     return thc2(th2)
+
 
 def MumfordToLevel2ThetaPoint(a, thc2, points):
     """
@@ -172,14 +183,14 @@ def MumfordToLevel2ThetaPoint(a, thc2, points):
 
     """
     if thc2.level() != 2:
-        raise ValueError(f'Expected level-2 theta structure.')
+        raise ValueError(f"Expected level-2 theta structure.")
 
     g = thc2.dimension()
 
     if len(points) == 0:
         return thc2(0)
 
-    K = PolynomialRing(parent(points[0][0]), 'x')
+    K = PolynomialRing(parent(points[0][0]), "x")
     x = K.gen()
     u = prod(x - point[0] for point in points)
 
@@ -197,59 +208,62 @@ def MumfordToLevel2ThetaPoint(a, thc2, points):
         for l, al in enumerate(a):
             if l not in V1:
                 V2.add(l)
-                up *= (x - al)
+                up *= x - al
                 points_p.append((al, 0))
                 if up.degree() == g:
                     break
 
     V = V1 | V2
 
-    C = choice_of_all_C_Cosset(g) # all other choices should give the same result
-    U = {2*x for x in range(g+1)}
-    B = frozenset(range(2*g + 1))
+    C = choice_of_all_C_Cosset(g)  # all other choices should give the same result
+    U = {2 * x for x in range(g + 1)}
+    B = frozenset(range(2 * g + 1))
 
-    th2p = [0]*2**(2*g)
+    th2p = [0] * 2 ** (2 * g)
 
     i = eta(g, U, normalized=True, idx=True)
     th2p[i] = 1 / constant_f2_level2(a, thc2, set(), C[frozenset()])
 
-    for l in range(2*g + 1):
+    for l in range(2 * g + 1):
         ii = eta(g, U ^ {l}, normalized=True, idx=True)
-        th2p[ii] = (-1)**g*up(a[l])
+        th2p[ii] = (-1) ** g * up(a[l])
         th2p[ii] /= constant_f2_level2(a, thc2, {l}, C[frozenset([l])])
 
-    for S in chain.from_iterable(combinations(range(2*g + 1), r) for r in range(2, g+1)):
+    for S in chain.from_iterable(
+        combinations(range(2 * g + 1), r) for r in range(2, g + 1)
+    ):
         S = frozenset(S)
         if V & S == set():
             YS = YS_fromMumford_Generic(g, a, S, points_p)
             ii = eta(g, U ^ S, normalized=True, idx=True)
-            th2p[ii] = YS**2*(-1)**(g*len(S))
+            th2p[ii] = YS**2 * (-1) ** (g * len(S))
             th2p[ii] /= prod(up(a[l]) for l in S)
             th2p[ii] /= constant_f2_level2(a, thc2, S, C[S])
         elif V < S:
             Sp = B - S
             YS = YS_fromMumford_Generic(g, a, Sp, points_p)
             ii = eta(g, U ^ Sp, normalized=True, idx=True)
-            th2p[ii] = YS**2*(-1)**(g*len(Sp))
+            th2p[ii] = YS**2 * (-1) ** (g * len(Sp))
             th2p[ii] /= prod(up(a[l]) for l in Sp)
             th2p[ii] /= constant_f2_level2(a, thc2, Sp, C[Sp])
-        elif len(S) < 2*len(V & S): #TODO: Not tested
-            ii = eta(g,U ^ S, normalized=True, idx=True)
+        elif len(S) < 2 * len(V & S):  # TODO: Not tested
+            ii = eta(g, U ^ S, normalized=True, idx=True)
             th2p[ii] = 0
-        else: #TODO: Not tested
-            deb = [(a[l],0) for l in V & S]
+        else:  # TODO: Not tested
+            deb = [(a[l], 0) for l in V & S]
             fin = [points_p[i] for i in range(g) if points_p[i] not in deb]
             YS_sq = Y_fromMumford_with2torsion(g, a, S, deb + fin, V & S)
             ii = eta(g, U ^ S, normalized=True, idx=True)
-            th2p[ii] = YS_sq*(-1)**(g*len(S - V))
+            th2p[ii] = YS_sq * (-1) ** (g * len(S - V))
             th2p[ii] /= prod(up(a[l]) for l in S - V)
             th2p[ii] /= constant_f2_level2(a, thc2, S, C[S])
 
     th2 = thc2(th2p)
-    for l in V2: ##TODO: Can we compute eta(V2) and add only once?
-        th2 = th2.add_twotorsion_point(eta(g,l))
+    for l in V2:  ##TODO: Can we compute eta(V2) and add only once?
+        th2 = th2.add_twotorsion_point(eta(g, l))
 
     return th2
+
 
 def ThetaToMumford_2_Generic(a, th2):
     """
@@ -277,31 +291,31 @@ def ThetaToMumford_2_Generic(a, th2):
     g = thc2.dimension()
 
     if thc2.level() != 2:
-        raise ValueError(f'Expected a level-2 theta structure')
+        raise ValueError(f"Expected a level-2 theta structure")
 
     Ab = thc2._numbering
     idx = thc2._char_to_idx
 
     F = parent(th2[0])
-    K = PolynomialRing(F, 'x')
+    K = PolynomialRing(F, "x")
     x = K.gen()
     a = [F(elem) for elem in a]
 
-    U = frozenset(2*x for x in range(g+1))
-    zg = eta_second(g, set(range(2*g+1)))/2
+    U = frozenset(2 * x for x in range(g + 1))
+    zg = eta_second(g, set(range(2 * g + 1))) / 2
 
-    C = choice_of_all_C_Cosset(g) # all other choices should give the same result
+    C = choice_of_all_C_Cosset(g)  # all other choices should give the same result
 
     idx_etaU = eta(g, U, normalized=True, idx=True)
     if th2[idx_etaU] == 0:
-        raise ValueError('Divisor theta!') #FIXME
+        raise ValueError("Divisor theta!")  # FIXME
 
     u_al = []
     ct_f2_empty = constant_f2_level2(a, thc2, set(), C[frozenset()])
     ct_f2_U = constant_f2_level2(a, thc2, U, C[U])
-    for l in range(g+1):
+    for l in range(g + 1):
         Sl = frozenset([l])
-        val = (-1)**g
+        val = (-1) ** g
         val *= th2[eta(g, U ^ Sl, normalized=True, idx=True)]
         val /= th2[idx_etaU]
         val *= constant_f2_level2(a, thc2, Sl, C[Sl])
@@ -311,81 +325,85 @@ def ThetaToMumford_2_Generic(a, th2):
     # use Lagrange interpolation
     u = K(0)
     for i, t in enumerate(u_al):
-        t *= prod((x - a[j])/(a[i] - a[j]) for j in range(g+1) if j!= i)
+        t *= prod((x - a[j]) / (a[i] - a[j]) for j in range(g + 1) if j != i)
         u += t
 
     # we have u
-    v2_al = [F(0)]*(2*g - 1)
-    for l in range(2*g - 1):
+    v2_al = [F(0)] * (2 * g - 1)
+    for l in range(2 * g - 1):
         if l < g:
-            V = set(range(g+1))
+            V = set(range(g + 1))
             V.remove(l)
         else:
             V = set(range(g))
 
         for m in V:
-            t = th2[eta(g,U ^ {l,m}, normalized=True, idx=True)]
+            t = th2[eta(g, U ^ {l, m}, normalized=True, idx=True)]
             t /= th2[idx_etaU]
-            t *= constant_f2_level2(a, thc2, {l,m}, C[frozenset([l,m])])
+            t *= constant_f2_level2(a, thc2, {l, m}, C[frozenset([l, m])])
             t /= ct_f2_empty
-            t *= u(a[l])*u(a[m])
-            t /= prod((a[m] - a[k])**2 for k in V - {m})
+            t *= u(a[l]) * u(a[m])
+            t /= prod((a[m] - a[k]) ** 2 for k in V - {m})
             v2_al[l] += t
 
         # Now compute the terms t corresponding to m <=> n
         for m, n in product(V, repeat=2):
             if n == m:
                 continue
-            t = sign_s_A(g,{l,m},C)*sign_s_A(g,{l,n},C)
+            t = sign_s_A(g, {l, m}, C) * sign_s_A(g, {l, n}, C)
 
             t *= th2[eta(g, U ^ {l}, normalized=True, idx=True)]
-            t /= th2[idx_etaU]**3
+            t /= th2[idx_etaU] ** 3
             t *= constant_f2_level2(a, thc2, {l}, C[frozenset([l])])
             t /= ct_f2_empty**3
 
             # we need to compute s = t_lm(z) t_ln(z) t_m(z) t_n(z)
             s = 0
-            for S in combinations(range(2*g + 1), g+1):
+            for S in combinations(range(2 * g + 1), g + 1):
                 S = frozenset(S)
-                if l not in S or len(S & {m,n}) != 1:
+                if l not in S or len(S & {m, n}) != 1:
                     continue
-                e = eta(g, U ^ S ^ {l,m,n})
-                r = 0 # r = theta[e](2z) theta[e](0) theta[0](0)^2
+                e = eta(g, U ^ S ^ {l, m, n})
+                r = 0  # r = theta[e](2z) theta[e](0) theta[0](0)^2
                 for idxb, b in enumerate(Ab):
-                    q = (-1)**ZZ(e[:g]*b[g:])
+                    q = (-1) ** ZZ(e[:g] * b[g:])
                     q *= th2[idx(b + e)]
                     q *= th2[idxb]
-                    r += q/2**g
+                    r += q / 2**g
 
                 # We multiply r by the right constant in the sum
                 c = set()
-                for st in [{l,m}, {l,n}, {m}, {n}]:
+                for st in [{l, m}, {l, n}, {m}, {n}]:
                     c.symmetric_difference_update(C[frozenset(st)])
                 c.intersection_update(U)
-                cst = (-1)**ZZ(eta_prime(g,c)*zg)
-                cst /= prod((-1)**(i > j)*(a[j] - a[i]) for i, j in product(S - {l, m, n}, range(2*g + 1)) if j not in S | {m, n})
+                cst = (-1) ** ZZ(eta_prime(g, c) * zg)
+                cst /= prod(
+                    (-1) ** (i > j) * (a[j] - a[i])
+                    for i, j in product(S - {l, m, n}, range(2 * g + 1))
+                    if j not in S | {m, n}
+                )
                 cst *= ct_f2_U
-                cst *= constant_f2_level2(a, thc2, S ^ {l,m,n}, C[S ^ {l,m,n}])
+                cst *= constant_f2_level2(a, thc2, S ^ {l, m, n}, C[S ^ {l, m, n}])
                 r *= cst
 
-                #the sign in the sum
-                r *= (-1)**g
+                # the sign in the sum
+                r *= (-1) ** g
                 r *= e_2(g, U, S)
-                r *= ZZ(-1)**(eta_prime(g, l)*eta_second(g,S - {m,n}))
-                r *= ZZ(-1)**(eta_prime(g, {m,n})*eta_second(g,S - {l}))
-                r *= ZZ(-1)**(eta_prime(g, m)*eta_second(g, n))
+                r *= ZZ(-1) ** (eta_prime(g, l) * eta_second(g, S - {m, n}))
+                r *= ZZ(-1) ** (eta_prime(g, {m, n}) * eta_second(g, S - {l}))
+                r *= ZZ(-1) ** (eta_prime(g, m) * eta_second(g, n))
                 r *= e_2(g, {n}, S)
 
-                s += r/2**g
+                s += r / 2**g
 
             t *= s
             t /= prod(a[m] - a[k] for k in V if k != m)
             t /= prod(a[n] - a[k] for k in V if k != n)
-            v2_al[l]+=t
+            v2_al[l] += t
 
     v2 = K(0)
     for i, t in enumerate(v2_al):
-        t *= prod((x-a[j])/(a[i]-a[j]) for j in range(2*g - 1) if j != i)
+        t *= prod((x - a[j]) / (a[i] - a[j]) for j in range(2 * g - 1) if j != i)
         v2 += t
 
     return u, v2
@@ -407,21 +425,21 @@ def ThetaToMumford_2_algclose(a, th2):
     g = thc2.dimension()
 
     if thc2.level() != 2:
-        raise ValueError(f'Expected a level-2 theta structure')
+        raise ValueError(f"Expected a level-2 theta structure")
 
     # Ab = thc2._numbering
-    U = {2*x for x in range(g+1)}
+    U = {2 * x for x in range(g + 1)}
     th2p = th2
 
     V = set()
     idx_etaU = eta(g, U, normalized=True, idx=True)
-    for l in range(2*g + 1):
+    for l in range(2 * g + 1):
         if th2p[idx_etaU] != 0:
             break
         V.add(l)
         th2p = th2p.add_twotorsion_point(eta(g, l))
 
-    u, v2 = ThetaToMumford_2_Generic(a,th2p)
+    u, v2 = ThetaToMumford_2_Generic(a, th2p)
 
     K = parent(u)
     x = K.gen()
@@ -432,14 +450,15 @@ def ThetaToMumford_2_algclose(a, th2):
             u /= x - a[l]
             u = K(u)
             v = sqrt(v2)
-            v2 = K(v2 + v2[2*d - 2]*u**2 - 2*v[d - 1]*v*u )
+            v2 = K(v2 + v2[2 * d - 2] * u**2 - 2 * v[d - 1] * v * u)
         else:
-            d,e,f = XGCD(u, x - a[l])
+            d, e, f = XGCD(u, x - a[l])
             v = sqrt(v2)
-            v2 = K(v2 + (e/d)**2*u*v2(a[l]) - 2*e/d*u*v*v(a[l]) )
-            u *= x-a[l]
+            v2 = K(v2 + (e / d) ** 2 * u * v2(a[l]) - 2 * e / d * u * v * v(a[l]))
+            u *= x - a[l]
 
-    return u,v2
+    return u, v2
+
 
 def Level2ThetaPointToMumford(a, th2):
     """
@@ -459,13 +478,13 @@ def Level2ThetaPointToMumford(a, th2):
     g = thc2.dimension()
 
     if thc2.level() != 2:
-        raise ValueError(f'Expected a level-2 theta structure')
+        raise ValueError(f"Expected a level-2 theta structure")
 
-    U = {2*x for x in range(g+1)}
+    U = {2 * x for x in range(g + 1)}
     th2p = th2
     idx_etaU = eta(g, U, normalized=True, idx=True)
     V = set()
-    for l in range(2*g + 1):
+    for l in range(2 * g + 1):
         if th2p[idx_etaU] != 0:
             break
         V.add(l)
@@ -477,7 +496,7 @@ def Level2ThetaPointToMumford(a, th2):
 
     F = parent(u[0])
     FF = F.extension(2)
-    KK = PolynomialRing(FF, 'x')
+    KK = PolynomialRing(FF, "x")
     x = K.gen()
 
     for l in V:
@@ -486,11 +505,11 @@ def Level2ThetaPointToMumford(a, th2):
             u /= x - a[l]
             u = K(u)
             v = K(sqrt(KK(v2)))
-            v2 = K(v2 + v2[2*d-2]*u**2 - 2*v[d-1]*v*u )
+            v2 = K(v2 + v2[2 * d - 2] * u**2 - 2 * v[d - 1] * v * u)
         else:
-            d,e,f = XGCD(u, x - a[l])
+            d, e, f = XGCD(u, x - a[l])
             v = K(sqrt(KK(v2)))
-            v2 = K(v2 + (e/d)**2*u*v2(a[l]) - 2*e/d*u*v*v(a[l]) )
+            v2 = K(v2 + (e / d) ** 2 * u * v2(a[l]) - 2 * e / d * u * v * v(a[l]))
             u *= x - a[l]
 
-    return u,v2
+    return u, v2

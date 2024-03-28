@@ -143,6 +143,7 @@ def reduce_twotorsion_couple(x, y):
     T = tx.parent()
     if not D.has_coerce_map_from(T):
         from sage.structure.coerce_maps import CallableConvertMap
+
         n = D.gens()[0].order()
         s = n // 2
 
@@ -151,7 +152,7 @@ def reduce_twotorsion_couple(x, y):
 
         c = CallableConvertMap(T, D, c)
         D.register_coercion(c)
-    return (xred, y + tx, tx) if xred < yred else (yred, x+ty,  ty)
+    return (xred, y + tx, tx) if xred < yred else (yred, x + ty, ty)
 
 
 def reduce_symtwotorsion_couple(x, y):
@@ -182,6 +183,7 @@ def reduce_symtwotorsion_couple(x, y):
     T = tx.parent()
     if not D.has_coerce_map_from(T):
         from sage.structure.coerce_maps import CallableConvertMap
+
         n = D.gens()[0].order()
         s = n // 2
 
@@ -190,7 +192,11 @@ def reduce_symtwotorsion_couple(x, y):
 
         c = CallableConvertMap(T, D, c)
         D.register_coercion(c)
-    return (xred, reduce_sym(y + tx), tx) if xred < yred else (yred, reduce_sym(x + ty), ty)
+    return (
+        (xred, reduce_sym(y + tx), tx)
+        if xred < yred
+        else (yred, reduce_sym(x + ty), ty)
+    )
 
 
 def get_dual_quadruplet(x, y, u, v):
