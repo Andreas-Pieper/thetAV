@@ -4,7 +4,7 @@
 AUTHORS:
 
 - Anna Somoza (2020-22): initial implementation
-    
+
 """
 
 # ****************************************************************************
@@ -17,22 +17,23 @@ AUTHORS:
 # ****************************************************************************
 
 
-from functools import partial
-from itertools import product, combinations_with_replacement
 import warnings
+from functools import partial
+from itertools import combinations_with_replacement, product
 
 from sage.matrix.all import Matrix
 from sage.misc.all import ConstantFunction
-from sage.modules.free_module_element import vector, FreeModuleElement
-from sage.rings.all import PolynomialRing, Integer, ZZ
+from sage.modules.free_module_element import FreeModuleElement, vector
+from sage.rings.all import ZZ, Integer, PolynomialRing
 from sage.schemes.generic.morphism import SchemeMorphism_point
 from sage.structure.all import Sequence
 from sage.structure.element import AdditiveGroupElement
-from sage.structure.richcmp import richcmp_method, richcmp, op_EQ, op_NE
+from sage.structure.richcmp import op_EQ, op_NE, richcmp, richcmp_method
 
 from . import tools
 
 integer_types = (int, Integer)
+
 
 @richcmp_method
 class VarietyThetaStructurePoint(SchemeMorphism_point):
@@ -47,7 +48,6 @@ class VarietyThetaStructurePoint(SchemeMorphism_point):
 
     def _acted_upon_(self, k, on_left):
         return self._mult(k)
-
 
     def __init__(self, X, v):
         """
@@ -69,7 +69,9 @@ class VarietyThetaStructurePoint(SchemeMorphism_point):
         if len(v) != len(X):
             raise ValueError(f"v (={v}) must have length n^g (={len(X)}).")
         if not any(v):
-            raise ValueError('The given list does not define a valid thetapoint because all entries are zero')
+            raise ValueError(
+                "The given list does not define a valid thetapoint because all entries are zero"
+            )
 
         self._coords = v
         self.domain = ConstantFunction(point_homset.domain())
@@ -133,12 +135,12 @@ class VarietyThetaStructurePoint(SchemeMorphism_point):
         the rapport Q/P.
 
         INPUT:
-        
+
         - ``Q`` - a point.
-    
+
         - ``proj`` - a boolean (default: `True`). Weather the comparison
           is done as projective points.
-    
+
         - ``factor`` - a boolean (default: `False`). If True, as a second
           argument is returned, the rapport right/self.
 
@@ -222,7 +224,7 @@ class VarietyThetaStructurePoint(SchemeMorphism_point):
         for i, val in enumerate(self):
             if val != 0:
                 return i if idx else tools.idx(i, self.level())
-        raise ValueError('All entries are zero.')
+        raise ValueError("All entries are zero.")
 
     def diff_add(self, Q, PmQ):
         """
@@ -286,7 +288,7 @@ class VarietyThetaStructurePoint(SchemeMorphism_point):
         TESTS ::
 
             sage: #TODO level 4 tests
-            
+
         """
         return self._add(other)
 
@@ -306,7 +308,7 @@ class VarietyThetaStructurePoint(SchemeMorphism_point):
             sage: A = KummerVariety(GF(331), 2, [328 , 213 , 75 , 1])
             sage: P = A([255 , 89 , 30 , 1]); - P
             (255 : 89 : 30 : 1)
-            
+
         """
         point0 = self.scheme()
         D = point0._D
@@ -330,18 +332,18 @@ class VarietyThetaStructurePoint(SchemeMorphism_point):
         TESTS ::
 
             sage: #TODO level 4 tests
-            
+
         """
         return self._mult(k)
 
-    def _mult(self, k, algorithm='Montgomery'):
+    def _mult(self, k, algorithm="Montgomery"):
         """
         Compute scalar multiplication by `k` with a Montgomery ladder type algorithm.
-        
+
         INPUT:
-        
+
         - ``algorithm`` (default: 'Montgomery'): The chosen algorithm for the computation.
-          It can either be 'Montgomery' for a Montgomery ladder type algorithm, or 
+          It can either be 'Montgomery' for a Montgomery ladder type algorithm, or
           'SquareAndMultiply' for the usual square and multiply algorithm (only for level > 2).
 
         EXAMPLES ::
@@ -351,15 +353,15 @@ class VarietyThetaStructurePoint(SchemeMorphism_point):
             sage: P = A([255 , 89 , 30 , 1])
             sage: P._mult(42)
             (311 : 326 : 136 : 305)
-            
+
         .. SEEALSO::
-        
+
             :meth:`~._rmul_`
-            
+
         TESTS ::
 
             sage: #TODO level 4 tests
-            
+
         """
         if not isinstance(k, integer_types + (Integer,)):
             raise NotImplementedError
@@ -371,11 +373,11 @@ class VarietyThetaStructurePoint(SchemeMorphism_point):
         if k < 0:
             return (-k) * (-self)
         nP = self
-        if algorithm == 'Montgomery':
+        if algorithm == "Montgomery":
             mP = -self
             n1P = self.diff_add(self, point0)
-            for b in (k-1).binary()[1:]:
-                if b == '1':
+            for b in (k - 1).binary()[1:]:
+                if b == "1":
                     nn11P = n1P.diff_add(n1P, point0)
                     nP = nP.diff_add(n1P, mP)
                     n1P = nn11P
@@ -384,12 +386,14 @@ class VarietyThetaStructurePoint(SchemeMorphism_point):
                     nP = nP.diff_add(nP, point0)
                     n1P = nn1P
             return n1P
-        if algorithm == 'SquareAndMultiply':
+        if algorithm == "SquareAndMultiply":
             if self.scheme().level() == 2:
-                raise NotImplementedError("Square and Multiply algorithm is only for level > 2.")
-            for b in (k-1).binary()[1:]:
+                raise NotImplementedError(
+                    "Square and Multiply algorithm is only for level > 2."
+                )
+            for b in (k - 1).binary()[1:]:
                 nP = nP.diff_add(nP, point0)
-                if b == '1':
+                if b == "1":
                     nP = nP + self
             return nP
         raise NotImplementedError("Unknown algorithm %s" % algorithm)
@@ -397,9 +401,9 @@ class VarietyThetaStructurePoint(SchemeMorphism_point):
     def diff_multadd(self, k, PQ, Q):
         """
         Computes k*self + Q, k*self.
-        
+
         EXAMPLES::
-        
+
             sage: from thetAV import KummerVariety
             sage: R.<X> = PolynomialRing(GF(331))
             sage: poly = X^4 + 3*X^2 + 290*X + 3
@@ -414,18 +418,21 @@ class VarietyThetaStructurePoint(SchemeMorphism_point):
             sage: P.diff_multadd(42, PQ, Q)
             ((41*t^3 + 291*t^2 + 122*t + 305 : 119*t^3 + 95*t^2 + 120*t + 68 : 81*t^3 + 168*t^2 + 326*t + 24 : 202*t^3 + 251*t^2 + 246*t + 169),
             (311 : 326 : 136 : 305))
-        
+
         .. todo::
 
             If we don't need kP, then we don't need to compute kP, only (k/2)P, so
             we lose 2 differential additions. Could be optimized here.
-            
+
         """
         if k == 0:
             point0 = self.scheme().theta_null_point()
-            return Q, point0  # In Magma implementation it only returns Q, but I think it should be Q, P0
+            return (
+                Q,
+                point0,
+            )  # In Magma implementation it only returns Q, but I think it should be Q, P0
         if k < 0:
-            mP = - self
+            mP = -self
             return mP.diff_multadd(-k, Q.diff_add(mP, PQ), Q)
         if k == 1:
             return PQ, self
@@ -476,24 +483,32 @@ class VarietyThetaStructurePoint(SchemeMorphism_point):
             sage: #TODO examples
         """
         if self.scheme() != Q.scheme():
-            raise ValueError('The points must belong to the same Abelian Variety.')
+            raise ValueError("The points must belong to the same Abelian Variety.")
         if PQ is None:
             if self.scheme().level() == 2:
                 raise NotImplementedError
             PQ = self + Q
         else:
             if self.scheme() != PQ.scheme():
-                raise ValueError('The points must belong to the same Abelian Variety.')
+                raise ValueError("The points must belong to the same Abelian Variety.")
         point0 = self.scheme().theta_null_point()
         lPQ, lP = self.diff_multadd(l, PQ, Q)  # lP + Q, lP
         PlQ, lQ = Q.diff_multadd(l, PQ, self)  # P + lQ, lQ
-        r, k0P = lP.is_equal(point0, proj=True, factor=True)  # P is l-torsion, k0P is the factor
+        r, k0P = lP.is_equal(
+            point0, proj=True, factor=True
+        )  # P is l-torsion, k0P is the factor
         assert r, "Bad pairing!" + str(self)
-        r, k0Q = lQ.is_equal(point0, proj=True, factor=True)  # Q is l-torsion, k0Q is the factor
+        r, k0Q = lQ.is_equal(
+            point0, proj=True, factor=True
+        )  # Q is l-torsion, k0Q is the factor
         assert r, "Bad pairing!" + str(Q)
-        r, k1P = PlQ.is_equal(self, proj=True, factor=True)  # P + lQ == P, k1P is the factor
+        r, k1P = PlQ.is_equal(
+            self, proj=True, factor=True
+        )  # P + lQ == P, k1P is the factor
         assert r
-        r, k1Q = lPQ.is_equal(Q, proj=True, factor=True)  # lP+ Q == Q, k1Q is the factor
+        r, k1Q = lPQ.is_equal(
+            Q, proj=True, factor=True
+        )  # lP+ Q == Q, k1Q is the factor
         assert r
         return k1P * k0P / (k1Q * k0Q)
 
@@ -531,20 +546,24 @@ class VarietyThetaStructurePoint(SchemeMorphism_point):
             130*t^3 + 124*t^2 + 49*t + 153
         """
         if self.scheme() != Q.scheme():
-            raise ValueError('The points must belong to the same Abelian Variety.')
+            raise ValueError("The points must belong to the same Abelian Variety.")
         if PQ is None:
             if self.scheme().level() == 2:
                 raise NotImplementedError
             PQ = self + Q
         else:
             if self.scheme() != PQ.scheme():
-                raise ValueError('The points must belong to the same Abelian Variety.')
+                raise ValueError("The points must belong to the same Abelian Variety.")
         A = self.scheme()
         point0 = A.theta_null_point()
         PlQ, lQ = Q.diff_multadd(l, PQ, self)  # P + lQ, lQ
-        r, k0Q = point0.is_equal(lQ, proj=True, factor=True)  # Q is l-torsion, k0Q is the factor lQ/point0
+        r, k0Q = point0.is_equal(
+            lQ, proj=True, factor=True
+        )  # Q is l-torsion, k0Q is the factor lQ/point0
         assert r, "Bad pairing!" + str(Q)
-        r, k1P = self.is_equal(PlQ, proj=True, factor=True)  # P + lQ == P, k1P is the factor PlQ/P
+        r, k1P = self.is_equal(
+            PlQ, proj=True, factor=True
+        )  # P + lQ == P, k1P is the factor PlQ/P
         assert r
         r = (A.base_ring().cardinality() - 1) / l
         return (k1P / k0Q) ** r
@@ -552,7 +571,7 @@ class VarietyThetaStructurePoint(SchemeMorphism_point):
     def three_way_add(self, Q, R, PQ, QR, PR):
         """
         EXAMPLES::
-        
+
             sage: from thetAV import KummerVariety
             sage: R.<X> = PolynomialRing(GF(331))
             sage: poly = X^4 + 3*X^2 + 290*X + 3
@@ -576,13 +595,14 @@ class VarietyThetaStructurePoint(SchemeMorphism_point):
 
         """
         from .tools import eval_car, reduce_twotorsion_couple
+
         point0 = self.scheme()
         O = point0.theta_null_point()
         n = point0.level()
         g = point0.dimension()
         D = point0._D
         twotorsion = point0._twotorsion
-        ng = n ** g
+        ng = n**g
         PQR = [0] * ng
         idxi0 = self._get_nonzero_coord()
         i0 = D(idxi0)
@@ -593,30 +613,44 @@ class VarietyThetaStructurePoint(SchemeMorphism_point):
                 i2, j2, t2 = reduce_twotorsion_couple(I, J)
                 val = 0
                 for chi in twotorsion:
-                    l2 = sum(eval_car(chi, t) * Q[i1 + t] * R[j1 + t] for t in twotorsion)
-                    l3 = sum(eval_car(chi, t) * O[i2 + t] * QR[j2 + t] for t in twotorsion)
-                    l4 = sum(eval_car(chi, t) * PR[i1 + t] * PQ[j1 + t] for t in twotorsion)
+                    l2 = sum(
+                        eval_car(chi, t) * Q[i1 + t] * R[j1 + t] for t in twotorsion
+                    )
+                    l3 = sum(
+                        eval_car(chi, t) * O[i2 + t] * QR[j2 + t] for t in twotorsion
+                    )
+                    l4 = sum(
+                        eval_car(chi, t) * PR[i1 + t] * PQ[j1 + t] for t in twotorsion
+                    )
                     val += eval_car(chi, t2) * l3 * l4 / l2
-                PQR[idxI] = val / (2 ** g * self[idxJ])
+                PQR[idxI] = val / (2**g * self[idxJ])
             else:
                 idxJ, J = idxI, I
                 i2, j2, t2 = reduce_twotorsion_couple(I, J)
                 val = 0
                 for chi in twotorsion:
-                    l2 = sum(eval_car(chi, t) * Q[idxt] * R[idxt] for idxt, t in enumerate(twotorsion))
-                    l3 = sum(eval_car(chi, t) * O[i2 + t] * QR[j2 + t] for t in twotorsion)
-                    l4 = sum(eval_car(chi, t) * PR[idxt] * PQ[idxt] for idxt, t in enumerate(twotorsion))
+                    l2 = sum(
+                        eval_car(chi, t) * Q[idxt] * R[idxt]
+                        for idxt, t in enumerate(twotorsion)
+                    )
+                    l3 = sum(
+                        eval_car(chi, t) * O[i2 + t] * QR[j2 + t] for t in twotorsion
+                    )
+                    l4 = sum(
+                        eval_car(chi, t) * PR[idxt] * PQ[idxt]
+                        for idxt, t in enumerate(twotorsion)
+                    )
                     val += eval_car(chi, t2) * l3 * l4 / l2
-                PQR[idxI] = val / (2 ** g * self[idxJ])
+                PQR[idxI] = val / (2**g * self[idxJ])
         return point0.point(PQR)
 
     def scale(self, k):
         """
         Given an affine lift point 'P' and a factor 'k' in the field of definition, returns the
         affine lift given by kx.
-        
+
         EXAMPLE ::
-        
+
             sage: from thetAV import KummerVariety
             sage: F = GF(331)
             sage: A = KummerVariety(F, 2, [328 , 213 , 75 , 1])
@@ -625,9 +659,9 @@ class VarietyThetaStructurePoint(SchemeMorphism_point):
             (282 : 114 : 150 : 5)
 
         TEST :
-            
+
         If the factor to scale by is not in the field of definition, it should raise an error ::
-            
+
             sage: FF.<z> = GF(331^2)
             sage: P.scale(z)
             Traceback (most recent call last):
@@ -636,10 +670,12 @@ class VarietyThetaStructurePoint(SchemeMorphism_point):
 
         """
         if k not in self._R:
-            raise ValueError(f'The scalar factor k={k} should be in the base ring R={self._R}')
+            raise ValueError(
+                f"The scalar factor k={k} should be in the base ring R={self._R}"
+            )
         v = self._coords
         A = self.scheme()
-        return A.point((k * i for i in v))
+        return A.point(k * i for i in v)
 
     def compatible_lift(self, l, other=None, add=None):
         """
@@ -647,15 +683,15 @@ class VarietyThetaStructurePoint(SchemeMorphism_point):
         theta null point.
 
         INPUT :
-        
+
         - ``self`` -- an l-torsion point of the abelian variety
-        
+
         - ``other`` -- a list of points of the abelian variety, or None if only the lift of an l-torsion
           point is needed.
-        
+
         - ``add`` -- the list of sums self + P for all the points in P, or None if only the lift of an l-torsion
           point is needed.
-        
+
         - ``l`` -- the torsion
 
 
@@ -667,7 +703,9 @@ class VarietyThetaStructurePoint(SchemeMorphism_point):
         A = self.scheme()
         if add is None:
             if other is not None:
-                raise ValueError('For the lift of a pair of points, you need to indicate the value of their sum too.')
+                raise ValueError(
+                    "For the lift of a pair of points, you need to indicate the value of their sum too."
+                )
             m = ZZ((l - 1) / 2)
             Qm = m * self
             Qm1 = (m + 1) * self
@@ -704,10 +742,10 @@ class VarietyThetaStructurePoint(SchemeMorphism_point):
             return self._with_theta_basis[label]
         except KeyError:
             pass
-        if label == 'Fn':
+        if label == "Fn":
             return self
-        if label not in ['F(2,2)', 'F(2,2)^2', 'classical']:
-            raise ValueError(f'The basis {label} is either not implemented or unknown.')
+        if label not in ["F(2,2)", "F(2,2)^2", "classical"]:
+            raise ValueError(f"The basis {label} is either not implemented or unknown.")
         A = self.scheme().with_theta_basis(label)
         self._with_theta_basis[label] = A._point.from_algebraic(self, thc=A)
         return self._with_theta_basis[label]
@@ -761,7 +799,10 @@ class AbelianVarietyPoint(VarietyThetaStructurePoint):
                     for idxchi, chi in enumerate(twotorsion):
                         el = (idxchi, idx(ii), idx(jj))
                         if el not in dual:
-                            dual[el] = sum(tools.eval_car(chi, t) * O[ii + t] * O[jj + t] for t in twotorsion)
+                            dual[el] = sum(
+                                tools.eval_car(chi, t) * O[ii + t] * O[jj + t]
+                                for t in twotorsion
+                            )
                         el2 = (idxchi, idxi, idxj)
                         dual[el2] = tools.eval_car(chi, tt) * dual[el]
             X._dual = dual
@@ -773,11 +814,16 @@ class AbelianVarietyPoint(VarietyThetaStructurePoint):
                 for idxchi, chi in enumerate(twotorsion):
                     el = (idxchi, idx(ii), idx(jj))
                     if el not in dualself:
-                        dualself[el] = sum(tools.eval_car(chi, t) * v[idx(ii + t)] * v[idx(jj + t)] for t in twotorsion)
+                        dualself[el] = sum(
+                            tools.eval_car(chi, t) * v[idx(ii + t)] * v[idx(jj + t)]
+                            for t in twotorsion
+                        )
                     el2 = (idxchi, idx(i), idx(j))
                     dualself[el2] = tools.eval_car(chi, tt) * dualself[el]
 
-            for elem in combinations_with_replacement(combinations_with_replacement(enumerate(D), 2), 2):
+            for elem in combinations_with_replacement(
+                combinations_with_replacement(enumerate(D), 2), 2
+            ):
                 ((idxi, i), (idxj, j)), ((idxk, k), (idxl, l)) = elem
                 if i + j + k + l in DD:
                     m = D([ZZ(x) / 2 for x in i + j + k + l])
@@ -787,7 +833,9 @@ class AbelianVarietyPoint(VarietyThetaStructurePoint):
                         el3 = (idxchi, idx(m - i), idx(m - j))
                         el4 = (idxchi, idx(m - k), idx(m - l))
                         if dual[el1] * dualself[el2] != dual[el3] * dualself[el4]:
-                            raise ValueError('The given list does not define a valid thetapoint')
+                            raise ValueError(
+                                "The given list does not define a valid thetapoint"
+                            )
 
     def abelian_variety(self):
         """
@@ -820,7 +868,7 @@ class AbelianVarietyPoint(VarietyThetaStructurePoint):
 
         OUTPUT: The theta point `self + Q`. If `self`, `Q` and `PmQ` are good lifts,
         then the output is also a good lift.
-        
+
         EXAMPLES ::
 
             sage: from thetAV import AbelianVariety
@@ -835,8 +883,8 @@ class AbelianVarietyPoint(VarietyThetaStructurePoint):
         n = point0.level()
         g = point0.dimension()
         D = point0._D
-        ng = n ** g
-        twog = 2 ** g
+        ng = n**g
+        twog = 2**g
         PQ = [0] * ng
         i0 = PmQ._get_nonzero_coord()
         L = []
@@ -868,8 +916,8 @@ class AbelianVarietyPoint(VarietyThetaStructurePoint):
         point0 = self.abelian_variety()
         n = point0.level()
         g = point0.dimension()
-        ng = n ** g
-        twog = 2 ** g
+        ng = n**g
+        twog = 2**g
         L = [(chi, i, i0) for chi in range(twog) for i in range(ng)]
         r = point0._addition_formula(self, other, L)
         PQ = [sum(r[(chi, i, i0)] for chi in range(twog)) for i in range(ng)]
@@ -925,12 +973,12 @@ class KummerVarietyPoint(VarietyThetaStructurePoint):
         """
         VarietyThetaStructurePoint.__init__(self, X, v)
 
-        bases = kwargs.pop('with_theta_basis', None)
+        bases = kwargs.pop("with_theta_basis", None)
         if bases is not None:
             self._with_theta_basis = bases
 
         if check and not self._check():
-            raise ValueError('The point is not in the Kummer Variety.')
+            raise ValueError("The point is not in the Kummer Variety.")
 
     def kummer_variety(self):
         """
@@ -949,9 +997,9 @@ class KummerVarietyPoint(VarietyThetaStructurePoint):
         return self.scheme()
 
     def _check(self):
-        eq, = self.kummer_variety().equations()
+        (eq,) = self.kummer_variety().equations()
 
-        O = self.with_theta_basis('F(2,2)^2')
+        O = self.with_theta_basis("F(2,2)^2")
         idx = partial(tools.idx, n=2)
         a2 = O[idx([0, 0, 0, 0])]
         b2 = O[idx([0, 0, 1, 1])]
@@ -976,9 +1024,9 @@ class KummerVarietyPoint(VarietyThetaStructurePoint):
 
         OUTPUT: The theta point `self + Q`. If `self`, `Q` and `PmQ` are good lifts,
         then the output is also a good lift.
-        
+
         EXAMPLES ::
-        
+
             sage: from thetAV import KummerVariety
             sage: R.<X> = PolynomialRing(GF(331))
             sage: poly = X^4 + 3*X^2 + 290*X + 3
@@ -991,28 +1039,37 @@ class KummerVarietyPoint(VarietyThetaStructurePoint):
             ....: 258*t^3 + 39*t^2 + 313*t + 150 , 1])
             sage: PQ = P.diff_add(Q, PmQ); PQ
             (261*t^3 + 107*t^2 + 37*t + 135 : 205*t^3 + 88*t^2 + 195*t + 125 : 88*t^3 + 99*t^2 + 164*t + 98 : 159*t^3 + 279*t^2 + 254*t + 276)
-        
+
         """
         point0 = self.kummer_variety()
         n = 2
         g = point0.dimension()
         twotorsion = point0._twotorsion
-        ng = n ** g
+        ng = n**g
         PQ = [0] * ng
         i0 = PmQ._get_nonzero_coord()
         chari0 = twotorsion(i0)
         L = []
         for i, chari in enumerate(twotorsion):
             if PmQ[i] == 0:
-                L += [(chi, i, i0) for chi, charchi in enumerate(twotorsion) if
-                      tools.eval_car(charchi, chari + chari0) == 1]
+                L += [
+                    (chi, i, i0)
+                    for chi, charchi in enumerate(twotorsion)
+                    if tools.eval_car(charchi, chari + chari0) == 1
+                ]
             else:
                 L += [(chi, i, i) for chi in range(ng)]
         r = point0._addition_formula(self, Q, L)
         for i, chari in enumerate(twotorsion):
             if PmQ[i] == 0:
-                cartosum = [chi for chi, charchi in enumerate(twotorsion) if tools.eval_car(charchi, chari + chari0) == 1]
-                PQ[i] = sum(r[(chi, i, i0)] for chi in cartosum) / (PmQ[i0] * len(cartosum))
+                cartosum = [
+                    chi
+                    for chi, charchi in enumerate(twotorsion)
+                    if tools.eval_car(charchi, chari + chari0) == 1
+                ]
+                PQ[i] = sum(r[(chi, i, i0)] for chi in cartosum) / (
+                    PmQ[i0] * len(cartosum)
+                )
             else:
                 PQ[i] = sum(r[(chi, i, i)] for chi in range(ng)) / (ng * PmQ[i])
 
@@ -1034,36 +1091,56 @@ class KummerVarietyPoint(VarietyThetaStructurePoint):
         if (x := self == 0) or other == 0:
             return other if x else self
         from .tools import eval_car
+
         point0 = self.kummer_variety()
         twotorsion = point0._twotorsion
         n = 2
         g = point0._dimension
-        ng = n ** g
+        ng = n**g
         PQ = [0] * ng
         PmQ = [0] * ng
         i0 = twotorsion(idxi0)
         for idxi1, i1 in enumerate(twotorsion):
             if idxi0 == idxi1:
                 continue
-            L = [(idxchi, idxi, idxi0) for idxchi, chi in enumerate(twotorsion) for idxi, i in enumerate(twotorsion) if
-                 eval_car(chi, i + i0) == 1] \
-                + [(idxchi, idxi, idxi1) for idxchi, chi in enumerate(twotorsion) for idxi, i in enumerate(twotorsion) if
-                   eval_car(chi, i + i1) == 1]
+            L = [
+                (idxchi, idxi, idxi0)
+                for idxchi, chi in enumerate(twotorsion)
+                for idxi, i in enumerate(twotorsion)
+                if eval_car(chi, i + i0) == 1
+            ] + [
+                (idxchi, idxi, idxi1)
+                for idxchi, chi in enumerate(twotorsion)
+                for idxi, i in enumerate(twotorsion)
+                if eval_car(chi, i + i1) == 1
+            ]
             r = point0._addition_formula(self, other, L)
             kappa0 = [0] * ng
             kappa1 = [0] * ng
             for idxi, i in enumerate(twotorsion):
-                cartosum = [idxchi for idxchi, chi in enumerate(twotorsion) if eval_car(chi, i + i0) == 1]
-                kappa0[idxi] = sum(r[(idxchi, idxi, idxi0)] for idxchi in cartosum) / len(cartosum)
+                cartosum = [
+                    idxchi
+                    for idxchi, chi in enumerate(twotorsion)
+                    if eval_car(chi, i + i0) == 1
+                ]
+                kappa0[idxi] = sum(
+                    r[(idxchi, idxi, idxi0)] for idxchi in cartosum
+                ) / len(cartosum)
                 if idxi == idxi0 and kappa0[idxi0] == 0:
                     return self._add(other, idxi0 + 1)
-                cartosum = [idxchi for idxchi, chi in enumerate(twotorsion) if eval_car(chi, i + i1) == 1]
-                kappa1[idxi] = sum(r[(idxchi, idxi, idxi1)] for idxchi in cartosum) / len(cartosum)
+                cartosum = [
+                    idxchi
+                    for idxchi, chi in enumerate(twotorsion)
+                    if eval_car(chi, i + i1) == 1
+                ]
+                kappa1[idxi] = sum(
+                    r[(idxchi, idxi, idxi1)] for idxchi in cartosum
+                ) / len(cartosum)
             F = kappa1[idxi0].parent()
-            R = PolynomialRing(F, 'X')
+            R = PolynomialRing(F, "X")
             PmQ[idxi0] = F(1)
             PQ[idxi0] = kappa0[idxi0]
-            poly = R([kappa1[idxi1], - kappa0[idxi1], kappa0[idxi0]])
+            poly = R([kappa1[idxi1], -kappa0[idxi1], kappa0[idxi0]])
             roots = poly.roots(multiplicities=False)
             # it can happen that P and Q are not rational in the av but
             # rational in the kummer variety, so P+Q won't be rational
@@ -1073,10 +1150,12 @@ class KummerVarietyPoint(VarietyThetaStructurePoint):
                 continue
             elif len(roots) == 0:
                 # We compute the generic sum
-                S = PolynomialRing(F, 'r')
+                S = PolynomialRing(F, "r")
                 r = S.gen()
                 roots = [poly[1] - r, r]
-                warnings.warn('The normal addition is defined in an extension. Computing generic point.')
+                warnings.warn(
+                    "The normal addition is defined in an extension. Computing generic point."
+                )
             PmQ[idxi1] = roots[0] * PmQ[idxi0]
             PQ[idxi1] = roots[1] * PQ[idxi0]
             M = Matrix([[PmQ[idxi0], PmQ[idxi1]], [PQ[idxi0], PQ[idxi1]]])
@@ -1100,7 +1179,7 @@ class KummerVarietyPoint(VarietyThetaStructurePoint):
             sage: A = KummerVariety(GF(331), 2, [328 , 213 , 75 , 1])
             sage: P = A([255 , 89 , 30 , 1]); - P
             (255 : 89 : 30 : 1)
-            
+
         """
         return self
 
@@ -1120,4 +1199,7 @@ class KummerVarietyPoint(VarietyThetaStructurePoint):
             sage: [w**1889 for w in wp]
             [1, 1]
         """
-        return [VarietyThetaStructurePoint.weil_pairing(self, l, Q, pt) for pt in self.schematic_add(Q)]
+        return [
+            VarietyThetaStructurePoint.weil_pairing(self, l, Q, pt)
+            for pt in self.schematic_add(Q)
+        ]

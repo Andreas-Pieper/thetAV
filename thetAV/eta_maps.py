@@ -11,7 +11,6 @@ AUTHORS:
 
 """
 
-
 # ****************************************************************************
 #             Copyright (C) 2022 Anna Somoza <anna.somoza.henares@gmail.com>
 #
@@ -62,16 +61,16 @@ def eta_prime(g, L, normalized=False):
     """
     try:
         i = L
-        if i < 0 or i > 2*g + 1:
-            raise ValueError(f'Expected i={i} to be between 0 and {2*g + 1}')
+        if i < 0 or i > 2 * g + 1:
+            raise ValueError(f"Expected i={i} to be between 0 and {2*g + 1}")
     except TypeError:
         if len(L) == 0:
-            return zero_vector(ZZ,g)
+            return zero_vector(ZZ, g)
         v = sum(eta_prime(g, i) for i in L)
         return normalize_eta(v) if normalized else v
     else:
-        v = zero_vector(ZZ,g)
-        if i >= 2*g:
+        v = zero_vector(ZZ, g)
+        if i >= 2 * g:
             return v
         ih = floor(i / 2)
         v[ih] = 1
@@ -111,19 +110,19 @@ def eta_second(g, L, normalized=False):
     """
     try:
         i = L
-        if i < 0 or i > 2*g + 1:
-            raise ValueError(f'Expected i={i} to be between 0 and {2*g + 1}')
+        if i < 0 or i > 2 * g + 1:
+            raise ValueError(f"Expected i={i} to be between 0 and {2*g + 1}")
     except TypeError:
         if len(L) == 0:
-            return zero_vector(ZZ,g)
+            return zero_vector(ZZ, g)
         v = sum(eta_second(g, i) for i in L)
         return normalize_eta(v) if normalized else v
     else:
         V = ZZ**g
-        if i == 2*g+1:
+        if i == 2 * g + 1:
             return V(0)
         ih = ceil(i / 2)
-        v = V([1]*ih + [0]*(g-ih))
+        v = V([1] * ih + [0] * (g - ih))
         return v
 
 
@@ -166,9 +165,9 @@ def eta(g, L, normalized=False, idx=False):
         128
 
     """
-    V = ZZ**(2*g)
+    V = ZZ ** (2 * g)
     try:
-        if L == 2*g + 1 or len(L) == 0:
+        if L == 2 * g + 1 or len(L) == 0:
             return 0 if idx else V(0)
     except TypeError:
         ep = eta_prime(g, L)
@@ -180,7 +179,7 @@ def eta(g, L, normalized=False, idx=False):
         es = sum(eta_second(g, i) for i in L)
         v = V(list(chain(ep, es)))
         if normalized:
-            return ZZ([x%2 for x in v], 2) if idx else normalize_eta(v)
+            return ZZ([x % 2 for x in v], 2) if idx else normalize_eta(v)
         return v
 
 
@@ -203,6 +202,7 @@ def normalize_eta(v):
     """
     V = v.parent()
     return V([x % 2 for x in v])
+
 
 def sign_theta_normalized(*data):
     """
@@ -230,11 +230,12 @@ def sign_theta_normalized(*data):
     else:
         e = data[0]
         try:
-            g = ZZ(len(e)/2)
+            g = ZZ(len(e) / 2)
         except TypeError:
-            raise ValueError(f'Expected eta(={eta}) of even length')
+            raise ValueError(f"Expected eta(={eta}) of even length")
     en = normalize_eta(e)
-    return ZZ((-1)**(en[:g]*(e[g:] - en[g:])/2))
+    return ZZ((-1) ** (en[:g] * (e[g:] - en[g:]) / 2))
+
 
 def e_star(e):
     """
@@ -250,10 +251,11 @@ def e_star(e):
 
     """
     try:
-        g = ZZ(len(e)/2)
+        g = ZZ(len(e) / 2)
     except TypeError:
-        raise ValueError(f'Expected eta(={eta}) of even length')
-    return ZZ(-1)**(e[:g]*e[g:])
+        raise ValueError(f"Expected eta(={eta}) of even length")
+    return ZZ(-1) ** (e[:g] * e[g:])
+
 
 def e_2(g, A1, A2):
     """
@@ -268,4 +270,4 @@ def e_2(g, A1, A2):
     """
     eta1 = eta(g, A1)
     eta2 = eta(g, A2)
-    return ZZ((-1)**ZZ(eta2[:g]*eta1[g:] - eta1[:g]*eta2[g:]))
+    return ZZ((-1) ** ZZ(eta2[:g] * eta1[g:] - eta1[:g] * eta2[g:]))

@@ -376,7 +376,7 @@ latex_toplevel_sectioning = 'section'
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  ('index', package_name + '.tex', 'Documentation of thetAV\_sage',
+  ('index', package_name + '.tex', r'Documentation of thetAV\_sage',
    authors, 'manual'),
 ]
 

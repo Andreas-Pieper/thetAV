@@ -21,17 +21,24 @@ AUTHORS:
 #                                    https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from itertools import combinations, chain
+from itertools import chain, combinations
 
 from sage.arith.misc import XGCD
 from sage.functions.other import floor
 from sage.misc.all import prod
-from sage.rings.all import PolynomialRing, ZZ, Integer
+from sage.rings.all import ZZ, Integer, PolynomialRing
 from sage.structure.element import parent
 
 from .eta_maps import eta, eta_prime, eta_second, normalize_eta, sign_theta_normalized
-from .morphisms_aux import choice_of_all_C_Cosset, constant_f, YS_fromMumford_Generic, sign_s_A, \
-    prodYp_fromMumford_with2torsion, IgusaTheorem, YS_fromMumford_Delta
+from .morphisms_aux import (
+    IgusaTheorem,
+    YS_fromMumford_Delta,
+    YS_fromMumford_Generic,
+    choice_of_all_C_Cosset,
+    constant_f,
+    prodYp_fromMumford_with2torsion,
+    sign_s_A,
+)
 from .tools import rangeS
 
 integer_types = (int, Integer)
@@ -50,24 +57,24 @@ def MumfordToTheta_4_Generic(a, rac, thc, points):
     Assume that all P_i are distinct.
 
     Return the theta functions of level 4 associated to points.
-    
+
     .. todo:: Test against Magma, add examples
     """
     if thc.level() != 4:
-        raise ValueError(F'Expected level-4 theta structure.')
+        raise ValueError(f"Expected level-4 theta structure.")
 
     g = thc.dimension()
     if len(points) != g:
-        raise ValueError(F'Expected degree-{g} divisor')
+        raise ValueError(f"Expected degree-{g} divisor")
 
-    #TODO: We should try to take the polynomial ring from the parent, if possible
-    K = PolynomialRing(parent(points[0][0]), 'x')
+    # TODO: We should try to take the polynomial ring from the parent, if possible
+    K = PolynomialRing(parent(points[0][0]), "x")
     x = K.gen()
     u = prod(x - point[0] for point in points)
     thO = thc(0)
 
     if any(u(elem) == 0 for elem in a):
-        raise ValueError(F'Expected generic divisor')
+        raise ValueError(f"Expected generic divisor")
 
     C = choice_of_all_C_Cosset(g)  # all other choices should give the same result
     U = {2 * x for x in range(g + 1)}
@@ -77,10 +84,14 @@ def MumfordToTheta_4_Generic(a, rac, thc, points):
     th = [0] * 2 ** (2 * g)
 
     done = set()
-    for S1 in chain.from_iterable(combinations(range(2 * g + 1), l) for l in [g, g + 1]):
+    for S1 in chain.from_iterable(
+        combinations(range(2 * g + 1), l) for l in [g, g + 1]
+    ):
         if eta_second(g, U.symmetric_difference(S1), normalized=True) != 0:
             continue
-        for S2 in chain.from_iterable(combinations(range(2 * g + 1), l) for l in [g, g + 1]):
+        for S2 in chain.from_iterable(
+            combinations(range(2 * g + 1), l) for l in [g, g + 1]
+        ):
             if eta_prime(g, U.symmetric_difference(S2), normalized=True) != 0:
                 continue
 
@@ -92,10 +103,16 @@ def MumfordToTheta_4_Generic(a, rac, thc, points):
             done.add(i)
 
             # we use the duplication formula. t will be the general term
-            for S in chain.from_iterable(combinations(range(2 * g + 1), r) for r in range(g + 1)):
+            for S in chain.from_iterable(
+                combinations(range(2 * g + 1), r) for r in range(g + 1)
+            ):
                 S = frozenset(S)
-                B = [S.symmetric_difference(S1).symmetric_difference(S2),
-                     (S ^ U).symmetric_difference(S1), (S ^ U).symmetric_difference(S2), S]
+                B = [
+                    S.symmetric_difference(S1).symmetric_difference(S2),
+                    (S ^ U).symmetric_difference(S1),
+                    (S ^ U).symmetric_difference(S2),
+                    S,
+                ]
 
                 # we divide by f_Bi
                 t = 1 / prod(constant_f(g, Bi, C[Bi]).evaluate(a, thc, rac) for Bi in B)
@@ -125,19 +142,26 @@ def MumfordToTheta_4_Generic(a, rac, thc, points):
                     try:
                         t /= ((-1) ** g * u(a[l])) ** (ZZ(nb / 2))
                     except TypeError:
-                        raise ValueError('Expected even value.')  # FIXME
+                        raise ValueError("Expected even value.")  # FIXME
                 # now t is theta[UoB1] * theta[UoB2] * theta[UoB3] * theta[UoB4] /t_empty(z)^4
 
                 # the sign in the theta (we have changed the characteristic)
                 for Bi in B[:-1]:
-                    t *= (-1) ** ZZ(eta_prime(g, U ^ Bi) * (eta_second(g, U ^ S1) +
-                                                            eta_second(g, U ^ S2) + eta_second(g, U ^ S) - eta_second(g,
-                                                                                                                      U ^ Bi)) / 2)
+                    t *= (-1) ** ZZ(
+                        eta_prime(g, U ^ Bi)
+                        * (
+                            eta_second(g, U ^ S1)
+                            + eta_second(g, U ^ S2)
+                            + eta_second(g, U ^ S)
+                            - eta_second(g, U ^ Bi)
+                        )
+                        / 2
+                    )
 
                 # the sign in the duplication formulae
                 t *= (-1) ** ZZ(ee[:g] * eta_second(g, U ^ S))
 
-                th[i] += t / 2 ** g
+                th[i] += t / 2**g
 
             # scale the theta. i.e. constants used in doubling
             for elem in [S1, S2, U]:
@@ -179,7 +203,7 @@ def MumfordToLevel4ThetaPoint(a, rac, thc, points):
 
     """
     if thc.level() != 4:
-        raise ValueError('Expected level-4 theta structure.')
+        raise ValueError("Expected level-4 theta structure.")
 
     g = thc.dimension()
     thO = thc(0)
@@ -188,7 +212,7 @@ def MumfordToLevel4ThetaPoint(a, rac, thc, points):
     if len(points) == 0:
         return thO
 
-    K = PolynomialRing(F, 'x')
+    K = PolynomialRing(F, "x")
     x = K.gen()
     u = prod(x - point[0] for point in points)  # TODO: Maybe we want to store u?
 
@@ -203,7 +227,7 @@ def MumfordToLevel4ThetaPoint(a, rac, thc, points):
             if up.degree() == g:
                 break
             V2.add(l)
-            up *= (x - al)
+            up *= x - al
             points_p.append([al, 0])
 
     V = V1 | V2
@@ -216,10 +240,14 @@ def MumfordToLevel4ThetaPoint(a, rac, thc, points):
 
     idx = thc._char_to_idx
     done = set()
-    for S1 in chain.from_iterable(combinations(range(2 * g + 1), l) for l in [g, g + 1]):
+    for S1 in chain.from_iterable(
+        combinations(range(2 * g + 1), l) for l in [g, g + 1]
+    ):
         if eta_second(g, U.symmetric_difference(S1), normalized=True) != 0:
             continue
-        for S2 in chain.from_iterable(combinations(range(2 * g + 1), l) for l in [g, g + 1]):
+        for S2 in chain.from_iterable(
+            combinations(range(2 * g + 1), l) for l in [g, g + 1]
+        ):
             if eta_prime(g, U.symmetric_difference(S2), normalized=True) != 0:
                 continue
 
@@ -231,10 +259,16 @@ def MumfordToLevel4ThetaPoint(a, rac, thc, points):
             done.add(i)
 
             # we use the duplication formula. t will be the general term
-            for S in chain.from_iterable(combinations(range(2 * g + 1), r) for r in range(g + 1)):
+            for S in chain.from_iterable(
+                combinations(range(2 * g + 1), r) for r in range(g + 1)
+            ):
                 S = frozenset(S)
-                B = [S.symmetric_difference(S1).symmetric_difference(S2),
-                     (S ^ U).symmetric_difference(S1), (S ^ U).symmetric_difference(S2), S]
+                B = [
+                    S.symmetric_difference(S1).symmetric_difference(S2),
+                    (S ^ U).symmetric_difference(S1),
+                    (S ^ U).symmetric_difference(S2),
+                    S,
+                ]
 
                 if any(2 * len(V & Bi) > len(Bi) for Bi in B):
                     continue
@@ -254,7 +288,7 @@ def MumfordToLevel4ThetaPoint(a, rac, thc, points):
                         try:
                             t /= ((-1) ** g * up(a[l])) ** ZZ(nb / 2)
                         except TypeError:
-                            raise ValueError('Expected even value')  # FIXME
+                            raise ValueError("Expected even value")  # FIXME
 
                 else:
                     # we multiply by Y_Bi'
@@ -268,7 +302,9 @@ def MumfordToLevel4ThetaPoint(a, rac, thc, points):
                             elif len(set(points_p)) == len(points_p) - 1:
                                 t *= YS_fromMumford_Delta(g, a, Bi, points_p, F)
                             else:
-                                raise NotImplementedError('The case of non generic delta divisor is not implemented')
+                                raise NotImplementedError(
+                                    "The case of non generic delta divisor is not implemented"
+                                )
                             t *= sign_s_A(g, Bi, C)
                         elif len(Bi) == 2 * g:
                             t *= prod(point[1] for point in points_p)
@@ -287,21 +323,33 @@ def MumfordToLevel4ThetaPoint(a, rac, thc, points):
                         try:
                             t /= ((-1) ** g * u(a[l])) ** (ZZ(nb / 2))
                         except TypeError:
-                            raise ValueError('Expected even value')  # FIXME
+                            raise ValueError("Expected even value")  # FIXME
                 # t is theta[UoB1] * theta[UoB2] * theta[UoB3] * theta[UoB4] /t_empty(z)^4
 
                 # the sign in the theta (we have changed the characteristic
                 es_US1 = eta_second(g, U.symmetric_difference(S1))
                 es_US2 = eta_second(g, U.symmetric_difference(S2))
                 es_US = eta_second(g, U ^ S)
-                t *= (-1) ** ZZ(eta_prime(g, U ^ B[0]) * (es_US1 + es_US2 + es_US - eta_second(g, U ^ B[0])) / 2)
-                t *= (-1) ** ZZ(eta_prime(g, U ^ B[1]) * (es_US1 + es_US - eta_second(g, U ^ B[1])) / 2)
-                t *= (-1) ** ZZ(eta_prime(g, U ^ B[2]) * (es_US2 + es_US - eta_second(g, U ^ B[2])) / 2)
+                t *= (-1) ** ZZ(
+                    eta_prime(g, U ^ B[0])
+                    * (es_US1 + es_US2 + es_US - eta_second(g, U ^ B[0]))
+                    / 2
+                )
+                t *= (-1) ** ZZ(
+                    eta_prime(g, U ^ B[1])
+                    * (es_US1 + es_US - eta_second(g, U ^ B[1]))
+                    / 2
+                )
+                t *= (-1) ** ZZ(
+                    eta_prime(g, U ^ B[2])
+                    * (es_US2 + es_US - eta_second(g, U ^ B[2]))
+                    / 2
+                )
 
                 # the sign in the duplication formulae
                 t *= (-1) ** ZZ(ee[:g] * es_US)
 
-                thp[i] += t / 2 ** g
+                thp[i] += t / 2**g
 
             # scale the theta. i.e. constants used in doubling
             for elem in [S1, S2, U]:
@@ -320,6 +368,7 @@ def MumfordToLevel4ThetaPoint(a, rac, thc, points):
 
 # ***** (7) Theta to Mumford *****//
 
+
 def Ylm_fromTheta(a, rac, l, m, th, C):
     """
     Let D be a point in Jac(C)\\Theta
@@ -329,15 +378,15 @@ def Ylm_fromTheta(a, rac, l, m, th, C):
     Let C be the choice of sets in the definition of the f_A
 
     Compute the function Y_{l,m}
-    
+
     .. todo:: Test against Magma, add examples.
     """
     thc = th.abelian_variety()
     g = thc.dimension()
     if l == m:
-        raise ValueError(F'l(={l}) and m(={m}) have to be distinct')
+        raise ValueError(f"l(={l}) and m(={m}) have to be distinct")
     if thc.level() != 4:
-        raise ValueError(f'Expected a level-4 theta structure')
+        raise ValueError(f"Expected a level-4 theta structure")
 
     U = {2 * x for x in range(g + 1)}
 
@@ -345,7 +394,7 @@ def Ylm_fromTheta(a, rac, l, m, th, C):
     th_empty_4 = IgusaTheorem([eta(g, U)] * 4, [th, thO, thO, thO])
 
     if th_empty_4 == 0:
-        raise ValueError('Divisor theta!')  # FIXME
+        raise ValueError("Divisor theta!")  # FIXME
 
     sets = [frozenset([l, m]), frozenset([l]), frozenset([m]), frozenset()]
     th_prod = IgusaTheorem([eta(g, U ^ S) for S in sets], [th, thO, thO, thO])
@@ -368,16 +417,16 @@ def ThetaToMumford_4_Generic(a, rac, th):
     Let thc be the theta constants of level 4
 
     Compute the Mumford polynomials associated to D
-    
+
     .. todo:: Test against Magma, add examples
     """
     thc = th.abelian_variety()
     g = thc.dimension()
     if thc.level() != 4:
-        raise ValueError(f'Expected a level-4 theta structure')
+        raise ValueError(f"Expected a level-4 theta structure")
 
     F = thc._R
-    K = PolynomialRing(F, 'x')
+    K = PolynomialRing(F, "x")
     x = K.gen()
     a = [F(elem) for elem in a]
 
@@ -389,7 +438,7 @@ def ThetaToMumford_4_Generic(a, rac, th):
     th_empty_4 = IgusaTheorem([eta(g, U)] * 4, list_th)
 
     if th_empty_4 == 0:
-        raise ValueError('Divisor theta!')  # FIXME
+        raise ValueError("Divisor theta!")  # FIXME
 
     u_al = []
     eltE_empty = constant_f(g, set(), C[frozenset()]).evaluate(a, thc, rac)
@@ -398,7 +447,7 @@ def ThetaToMumford_4_Generic(a, rac, th):
         th_numer = IgusaTheorem([eta(g, U ^ Sl)] * 2 + [eta(g, U)] * 2, list_th)
         val = (-1) ** g * th_numer / th_empty_4
         val *= constant_f(g, Sl, C[Sl]).evaluate(a, thc, rac) ** 2
-        val /= eltE_empty ** 2
+        val /= eltE_empty**2
         u_al.append(val)
 
     u = K(0)
@@ -429,14 +478,14 @@ def Level4ThetaPointToMumford(a, rac, th):
     Let rac be a root of a_1 - a_0
 
     Compute the Mumford polynomials associated to D
-    
+
     .. todo:: Test against Magma, add examples
     """
     thc = th.abelian_variety()
     g = thc.dimension()
 
     if thc.level() != 4:
-        raise ValueError(f'Expected a level-4 theta structure')
+        raise ValueError(f"Expected a level-4 theta structure")
 
     U = {2 * x for x in range(g + 1)}
 
